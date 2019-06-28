@@ -1,0 +1,164 @@
+blockquote {
+    background-color: #707070;
+    color: #fff;
+    border-left: 8px solid #b1b1b1
+}
+
+blockquote a {
+    color: #f8ff1c;
+}
+blockquote a:hover {
+    color: #faff1f;
+}
+
+.headerTitleWithLogo {
+    color: #000
+}
+
+.navigationSlider .slidingNav ul li a {
+    color: #000
+}
+
+.navigationSlider .slidingNav ul li > a:focus,
+.navigationSlider .slidingNav ul li > a:hover,
+.navigationSlider .slidingNav ul li.siteNavItemActive > a,
+.navigationSlider .slidingNav ul li.siteNavGroupActive > a {
+    background-color: #ef1d1d;
+}
+
+.navigationSlider .slidingNav ul li a:hover {
+    background-color: #ef1d1d;
+}
+
+.toc .toggleNav ul li a:hover,
+.toc .toggleNav ul li a:focus {
+    color: #000
+}
+
+.fixedHeaderContainer {
+    background-color: #fff
+}
+
+.mainContainer strong {
+    color: #ef1d1d;
+}
+
+.projectTitle {
+    color: #fff
+}
+
+.homeContainer {
+    background-color: #404040;
+    padding: 30px 0;
+}
+
+a:hover {
+    color: #ef1d1d
+}
+
+a {
+    color: #ef1d1d
+}
+
+.button {
+    color: #000;
+    border: 1px solid #fff;
+    background-color: #808080
+}
+
+.button:hover {
+    background-color: #ef1d1d
+}
+
+.toc .toggleNav ul li.navListItemActive a {
+    color: #ef1d1d;
+}
+
+.twoByGridBlock img {
+    width: 50%;
+    margin: auto;
+    display: block;
+}
+
+.twoByGridBlock img[src$="panoptes_architecture.png"] {
+    width: 100%;
+    margin: auto;
+    display: block;
+}
+
+.fourByGridBlock img {
+    width: 100%
+}
+
+.homeContainer .blockContent {
+    padding: 15px;
+}
+
+.homeContainer .blockImage {
+    margin: auto;
+}
+
+.projectLogo {
+    display: block;
+    width: 100%
+}
+
+.homeContainer .homeWrapper .projectLogo img {
+    width: 50%;
+    height: auto;
+    display: block;
+    margin: auto;
+}
+
+@media only screen and (min-width: 360px) and (max-width: 736px) {
+    .homeContainer .homeWrapper .projectLogo img {
+        width: 100%;
+        height: auto;
+        display: block;
+        margin: auto;
+        max-width: 400px;
+    }
+
+    .homeContainer .blockImage {
+        width: 100%;
+        float: left;
+    }
+
+    .homeContainer .blockContent {
+        width: 100%;
+    }
+}
+
+@media only screen and (min-width: 1024px) {
+
+
+}
+
+@media only screen and (max-width: 1023px) {
+    .navigationSlider .slidingNav ul li a {
+        color: #fff;
+    }
+
+    .navigationSlider .slidingNav ul {
+        background: #808080;
+    }
+}
+
+@media only screen and (min-width: 1400px) {
+}
+
+@media only screen and (min-width: 1500px) {
+}
+
+@media only screen and (min-width: 1200px) {
+    .homeContainer .homeWrapper .projectLogo {
+        all: unset;
+    }
+}
+
+
+.container .wrapper .imageAlignSide p {
+    margin: 0 0 40px 0;
+    max-width: 560px;
+    text-align: left !important;
+}
