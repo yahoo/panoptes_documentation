@@ -12,7 +12,7 @@ const siteConfig = {
   baseUrl: '/panoptes_documentation/', // Base URL for your project */
 
   // Used for publishing and more
-  projectName: 'panoptes',
+  projectName: 'panoptes_documentation',
   organizationName: 'yahoo',
 
   // For no header links in the top nav bar -> headerLinks: [],
