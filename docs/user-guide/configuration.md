@@ -13,9 +13,9 @@ There is a third configuration file that relates to the time series database.
 
 ## panoptes.ini
 
-an example [panoptes.ini](../examples/conf/panoptes.ini) is provided as a jumping off point.
+an example [panoptes.ini](https://github.com/yahoo/panoptes/blob/master/examples/conf/panoptes.ini) is provided as a jumping off point.
 
 ## logging.ini
 
-an example [logging.ini](../examples/conf/logging.ini) is also provided.
+an example [logging.ini](https://github.com/yahoo/panoptes/blob/master/examples/conf/logging.ini) is also provided.
 
