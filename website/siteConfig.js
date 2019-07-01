@@ -8,8 +8,8 @@
 const siteConfig = {
   title: 'Panoptes',
   tagline: 'Open Source device monitoring at scale',
-  url: 'https://yahoo.github.io', // Your website URL
-  baseUrl: '/panoptes_documentation/', // Base URL for your project */
+  url: 'http://getpanoptes.io', // Your website URL
+  baseUrl: '/', // Base URL for your project */
 
   // Used for publishing and more
   projectName: 'panoptes_documentation',
