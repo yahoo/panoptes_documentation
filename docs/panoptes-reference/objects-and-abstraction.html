@@ -1,0 +1,164 @@
+<!DOCTYPE html><html lang="en"><head><meta charSet="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><title>Objects &amp; Abstraction · Panoptes</title><meta name="viewport" content="width=device-width"/><meta name="generator" content="Docusaurus"/><meta name="description" content="&lt;h3&gt;&lt;a class=&quot;anchor&quot; aria-hidden=&quot;true&quot; id=&quot;site&quot;&gt;&lt;/a&gt;&lt;a href=&quot;#site&quot; aria-hidden=&quot;true&quot; class=&quot;hash-link&quot;&gt;&lt;svg class=&quot;hash-link-icon&quot; aria-hidden=&quot;true&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Site&lt;/h3&gt;
+"/><meta name="docsearch:language" content="en"/><meta property="og:title" content="Objects &amp; Abstraction · Panoptes"/><meta property="og:type" content="website"/><meta property="og:url" content="https://yahoo.github.io/panoptes_documentation/"/><meta property="og:description" content="&lt;h3&gt;&lt;a class=&quot;anchor&quot; aria-hidden=&quot;true&quot; id=&quot;site&quot;&gt;&lt;/a&gt;&lt;a href=&quot;#site&quot; aria-hidden=&quot;true&quot; class=&quot;hash-link&quot;&gt;&lt;svg class=&quot;hash-link-icon&quot; aria-hidden=&quot;true&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Site&lt;/h3&gt;
+"/><meta property="og:image" content="https://yahoo.github.io/panoptes_documentation/img/ogImage.png"/><meta name="twitter:card" content="summary"/><meta name="twitter:image" content="https://yahoo.github.io/panoptes_documentation/img/site_logo.png"/><link rel="shortcut icon" href="/panoptes_documentation/img/favicon.png"/><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/zenburn.min.css"/><script type="text/javascript" src="https://buttons.github.io/buttons.js"></script><script src="/panoptes_documentation/js/scrollSpy.js"></script><link rel="stylesheet" href="/panoptes_documentation/css/main.css"/><script src="/panoptes_documentation/js/codetabs.js"></script></head><body class="sideNavVisible separateOnPageNav"><div class="fixedHeaderContainer"><div class="headerWrapper wrapper"><header><a href="/panoptes_documentation/"><img class="logo" src="/panoptes_documentation/img/panoptes_eye_black.svg" alt="Panoptes"/><h2 class="headerTitleWithLogo">Panoptes</h2></a><div class="navigationWrapper navigationSlider"><nav class="slidingNav"><ul class="nav-site nav-site-internal"><li class=""><a href="/panoptes_documentation/docs/getting-started" target="_self">Docs</a></li><li class=""><a href="/panoptes_documentation/docs/concepts" target="_self">Concepts</a></li><li class=""><a href="/panoptes_documentation/docs/support" target="_self">Get Help</a></li><li class=""><a href="/panoptes_documentation/docs/contribute" target="_self">Contributing</a></li></ul></nav></div></header></div></div><div class="navPusher"><div class="docMainWrapper wrapper"><div class="container mainContainer"><div class="wrapper"><div class="post"><header class="postHeader"><h1 class="postHeaderTitle">Objects &amp; Abstraction</h1></header><article><div><span><h3><a class="anchor" aria-hidden="true" id="site"></a><a href="#site" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Site</h3>
+<p>A 'site' is a string which identifies a physical or logical collection of <a href="#resource">resources</a> to monitor. At Oath,
+we set the site to the name of datacenter in which a Panoptes instance is hosted.</p>
+<h3><a class="anchor" aria-hidden="true" id="resource"></a><a href="#resource" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Resource</h3>
+<p>A 'resource' in Panoptes is an abstraction of something that should be monitored. Typically, it would be a network
+device with associated metadata. The key properties a resource has are:</p>
+<ul>
+<li>A system wide unique id</li>
+<li>The site to which this resource belongs</li>
+<li>An 'endpoint' which can be monitored - in the case of network devices, this would be the hostname</li>
+<li>Three classifiers - class, subclass and type</li>
+<li>The name of the plugin that discovered this resource</li>
+<li>The Unix timestamp of creation of the resource</li>
+<li>The TTL (in seconds) of the resource</li>
+<li>Associated metadata, which are string based key value pairs</li>
+</ul>
+<p>Resources are 'discovered' by the <a href="/panoptes_documentation/docs/panoptes-reference/subsystems#discovery">Discovery subsystem</a>.</p>
+<p>At Oath, we set the resource ids to FQDNs for network devices since they are guaranteed to be unique within our
+system. Also, we set the following classifiers:</p>
+<ul>
+<li>Class: &quot;network&quot; for network devices, &quot;system&quot; for hosts</li>
+<li>Subclass: Typically set to the <em>function</em> of the resource - e.g. switch, firewall, router</li>
+<li>Type: For network devices, the manufacturer name</li>
+</ul>
+<p>Note that the above are an implementation detail at Oath and only meant to serve as guidance - in your installation,
+they could be set to any value.</p>
+<p>We would urge you to consider your resource naming and classification standards before a large scale rollout -
+as you will see in the next section, setting up resources correctly makes operations easier.</p>
+<h4><a class="anchor" aria-hidden="true" id="serialization"></a><a href="#serialization" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Serialization</h4>
+<p>Resources are encapsulated by the PanoptesResource class and are serialized as JSON. An example
+resource looks like:</p>
+<pre><code class="hljs css language-json">{
+    <span class="hljs-attr">"resource_id"</span>: <span class="hljs-string">"switch1.fqdn"</span>,
+    <span class="hljs-attr">"resource_site"</span>: <span class="hljs-string">"dc1"</span>,
+    <span class="hljs-attr">"resource_endpoint"</span>: <span class="hljs-string">"switch.fqdn"</span>,
+    <span class="hljs-attr">"resource_class"</span>: <span class="hljs-string">"network"</span>,
+    <span class="hljs-attr">"resource_subclass"</span>: <span class="hljs-string">"switch"</span>,
+    <span class="hljs-attr">"resource_type"</span>: <span class="hljs-string">"cisco"</span>,
+    <span class="hljs-attr">"resource_creation_timestamp"</span>: <span class="hljs-number">1532023147.34</span>,
+    <span class="hljs-attr">"resource_creation_plugin"</span>: <span class="hljs-string">"switch_discovery_plugin"</span>,
+    <span class="hljs-attr">"resource_metadata"</span>: {
+        <span class="hljs-attr">"_resource_ttl"</span>: <span class="hljs-number">604800</span>,
+        <span class="hljs-attr">"make"</span>: <span class="hljs-string">"Cisco"</span>,
+        <span class="hljs-attr">"model"</span>: <span class="hljs-string">"4948E"</span>,
+        <span class="hljs-attr">"os_name"</span>: <span class="hljs-string">"Cisco IOS"</span>,
+        <span class="hljs-attr">"os_version"</span>: <span class="hljs-string">"15.1(2)SG3"</span>
+    }
+}
+</code></pre>
+<h4><a class="anchor" aria-hidden="true" id="dsl"></a><a href="#dsl" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>DSL</h4>
+<p>A powerful concept throughout Panoptes is of the 'resource filter DSL' which can be applied to select/filter resources
+within various subsystems. This DSL is a subset of SQL with the following operators supported:</p>
+<ul>
+<li>=, !=, eq, ne, LIKE, AND, OR, NOT, IN</li>
+</ul>
+<p>An example resource filter would look like:</p>
+<pre><code class="hljs css language-sql">resource_class = "network"
+AND resource_subclass = "switch"
+AND resource_type != "arista" 
+AND resource_endpoint IN ("test1","test2")
+AND resource_metadata.make NOT LIKE "Arista%"
+AND resource_metadata.model NOT IN ("model1", "model2")
+</code></pre>
+<p>The above query would select all resources which:</p>
+<ul>
+<li>Are classified as network switches</li>
+<li>Are not of type arista or have their make set to Arista</li>
+<li>Are not named 'test1' or 'test2'</li>
+<li>Are not models 'model1' or 'model2'</li>
+</ul>
+<p>Note that grouping by parenthesis 'e.g. NOT (resource_site = &quot;dc1&quot; OR resource_site = &quot;dc2&quot;)' is <strong>not</strong> currently
+supported.</p>
+<p>The resource DSL is used in enrichment and polling plugin configurations.</p>
+<h3><a class="anchor" aria-hidden="true" id="enrichment"></a><a href="#enrichment" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Enrichment</h3>
+<p>Enrichments are metadata associated with any element within Panoptes. Enrichments may be collected from resources
+directly, OR by parsing/processing the telemetry collected from a resource OR by looking up an entirely different
+resource.</p>
+<p>Enrichments have the following properties:</p>
+<ul>
+<li>Can only be of type string</li>
+<li>Change less frequently than <a href="#metrics">metrics</a></li>
+<li>Usually are more expensive to process than metrics</li>
+</ul>
+<p>Because of all the properties mentioned above, enrichments cached in Redis and available to be used by any subsystem.</p>
+<p>Take, for example, the interface names from a network device. They don't change frequently and thus can be looked up
+in-frequently (say once every 30 minutes) and cached.</p>
+<h3><a class="anchor" aria-hidden="true" id="metrics"></a><a href="#metrics" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Metrics</h3>
+<p>Panoptes, as telemetry system, primarily collects, transforms and processes <em>metrics</em> from resources. A metric is,
+simply put, a number which can be measured and plotted. For example, the 'bits in' on an interface is a metric that can
+measured.</p>
+<p>Metrics are grouped and annotated in couple of ways within Panoptes:</p>
+<h4><a class="anchor" aria-hidden="true" id="metric-type"></a><a href="#metric-type" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Metric Type</h4>
+<p>Panoptes currently supports two types of metrics: counters and gauges.</p>
+<h4><a class="anchor" aria-hidden="true" id="metrics-group"></a><a href="#metrics-group" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Metrics Group</h4>
+<p>A set of metrics is called a metrics group within Panoptes.</p>
+<h4><a class="anchor" aria-hidden="true" id="metrics-group-type"></a><a href="#metrics-group-type" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Metrics Group Type</h4>
+<p>A set of related metrics are grouped by a 'metrics group type'. Take, for example, metrics related to interfaces -
+bits in, bits out, packets in, packets out etc. - these are collectively grouped under the metric group type 'interface'
+in Panoptes.</p>
+<p>Note that this grouping is by 'contract only' - that is, plugin authors are encouraged to get metrics groups with the
+same name if they adhere to a common schema. Nothing in Panoptes actually enforces this.</p>
+<h4><a class="anchor" aria-hidden="true" id="dimensions"></a><a href="#dimensions" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Dimensions</h4>
+<p>In addition to the numbers in a metric group type, it is pertinent to provide some metadata about what the metrics
+specifically refer to. In the interface metrics group type example, providing the name of the interface, in addition to
+just the metrics would make sense.</p>
+<p>These metadata are called 'dimensions' in Panoptes and they are arbitrary string based key/value pairs. By default, for
+each metric group type, the resource it's associated with is added to the metrics group. Commonly, enrichments collected
+for a resource would also be looked up and added to metrics groups.</p>
+<p>Some telemetry and monitoring systems refer to these as 'tags'.</p>
+<h4><a class="anchor" aria-hidden="true" id="timestamps"></a><a href="#timestamps" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Timestamps</h4>
+<p>Each metric in Panoptes has an associated millisecond resolution Unix epoch timestamp. For polled metrics (ala SNMP),
+this is the timestamp when a plugin received the metric from a resource - not when it was sampled/created on the
+resource.</p>
+<h4><a class="anchor" aria-hidden="true" id="time-series"></a><a href="#time-series" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Time Series</h4>
+<p>A set of unique dimension keys <em>and</em> values, in addition to a metric name uniquely identifies a time series.</p>
+<p>Continuing with the interface metrics example, the following could potentially identify a unique time series:</p>
+<ul>
+<li>Resource Endpoint (e.g. switch1.fqdn)</li>
+<li>Interface Name (e.g. eth0)</li>
+<li>Metric Name (e.g. bits_in)</li>
+</ul>
+<h4><a class="anchor" aria-hidden="true" id="serialization-1"></a><a href="#serialization-1" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Serialization</h4>
+<p>Metrics are serialized as JSON within Panoptes. A sample serialization looks as follows:</p>
+<pre><code class="hljs css language-json">{
+  <span class="hljs-attr">"resource"</span>:{
+    <span class="hljs-attr">"resource_id"</span>: <span class="hljs-string">"switch1.fqdn"</span>,
+    <span class="hljs-attr">"resource_site"</span>: <span class="hljs-string">"dc1"</span>,
+    <span class="hljs-attr">"resource_endpoint"</span>: <span class="hljs-string">"switch.fqdn"</span>,
+    <span class="hljs-attr">"resource_class"</span>: <span class="hljs-string">"network"</span>,
+    <span class="hljs-attr">"resource_subclass"</span>: <span class="hljs-string">"switch"</span>,
+    <span class="hljs-attr">"resource_type"</span>: <span class="hljs-string">"cisco"</span>,
+    <span class="hljs-attr">"resource_creation_timestamp"</span>: <span class="hljs-number">1532023147.34</span>,
+    <span class="hljs-attr">"resource_creation_plugin"</span>: <span class="hljs-string">"switch_discovery_plugin"</span>,
+    <span class="hljs-attr">"resource_metadata"</span>: {
+        <span class="hljs-attr">"_resource_ttl"</span>: <span class="hljs-number">604800</span>,
+        <span class="hljs-attr">"make"</span>: <span class="hljs-string">"Cisco"</span>,
+        <span class="hljs-attr">"model"</span>: <span class="hljs-string">"4948E"</span>,
+        <span class="hljs-attr">"os_name"</span>: <span class="hljs-string">"Cisco IOS"</span>,
+        <span class="hljs-attr">"os_version"</span>: <span class="hljs-string">"15.1(2)SG3"</span>
+    }
+  },
+  <span class="hljs-attr">"dimensions"</span>: [
+    {
+      <span class="hljs-attr">"dimension_name"</span>: <span class="hljs-string">"interface_name"</span>,
+      <span class="hljs-attr">"dimension_value"</span>: <span class="hljs-string">"GigabitEthernet0"</span>
+    }
+  ],
+  <span class="hljs-attr">"metrics"</span>: [
+    {
+      <span class="hljs-attr">"metric_creation_timestamp"</span>: <span class="hljs-number">1532023709.743</span>,
+      <span class="hljs-attr">"metric_type"</span>: <span class="hljs-string">"counter"</span>,
+      <span class="hljs-attr">"metric_name"</span>: <span class="hljs-string">"bits_in"</span>,
+      <span class="hljs-attr">"metric_value"</span>: <span class="hljs-number">7445623452378547</span>
+    }
+  ],
+  <span class="hljs-attr">"metrics_group_type"</span>: <span class="hljs-string">"interface"</span>,
+  <span class="hljs-attr">"metrics_group_schema_version"</span>: <span class="hljs-string">"0.2"</span>,
+  <span class="hljs-attr">"metrics_group_creation_timestamp"</span>: <span class="hljs-number">1532023709.732</span>,
+  <span class="hljs-attr">"metrics_group_interval"</span>: <span class="hljs-number">60</span>
+}
+</code></pre>
+</span></div></article></div><div class="docLastUpdate"><em>Last updated on 6/28/2019 by James Diss</em></div><div class="docs-prevnext"></div></div></div><nav class="onPageNav"></nav></div><footer class="nav-footer" id="footer"><section class="sitemap"><a href="/panoptes_documentation/" class="nav-home"><img src="/panoptes_documentation/img/panoptes_eye_white.svg" alt="Panoptes" width="100" height="100"/></a><div><h5>Docs</h5><a href="/panoptes_documentation/docs/getting-started">Getting Started</a><a href="/panoptes_documentation/docs/support">Get Help</a><a href="/panoptes_documentation/docs/contribute">Contribute</a></div><div><h5>Community</h5><a href="/panoptes_documentation/support">Get Help</a><a href="https://panoptescommunity.slack.com/">Slack</a><a href="https://yahoodevelopers.tumblr.com/" target="_blank" rel="noreferrer noopener">Blog</a></div><div><h5>More</h5><a href="https://github.com/yahoo/panoptes" target="_blank" rel="noreferrer noopener">GitHub</a><a href="https://github.com/yahoo/panoptes/issues" target="_blank" rel="noreferrer noopener">Report an Issue</a></div></section><section class="copyright">Copyright 2019 Oath Inc. Unless otherwise noted, all content on this site is provided under the <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC-BY-SA-4.0 license</a>.</section></footer></div></body></html>
