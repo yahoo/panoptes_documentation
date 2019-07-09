@@ -38,19 +38,10 @@
          * So the first one with positive bounding rect top will be the nearest next header
          */
         if (currNavActive && i < headings.length - 1) {
-          const heading = headings[i + 1];
-          const next = decodeURIComponent(heading.href.split('#')[1]);
+          const next = headings[i + 1].href.split('#')[1];
           const nextHeader = document.getElementById(next);
-
-          if (nextHeader) {
-            const top = nextHeader.getBoundingClientRect().top;
-            currNavActive = top > OFFSET;
-          } else {
-            console.error('Can not find header element', {
-              id: next,
-              heading,
-            });
-          }
+          const top = nextHeader.getBoundingClientRect().top;
+          currNavActive = top > OFFSET;
         }
         /**
          * Stop searching once a first such header is found,
@@ -65,7 +56,6 @@
       }
     }, 100);
   };
-
   document.addEventListener('scroll', onScroll);
   document.addEventListener('resize', onScroll);
   document.addEventListener('DOMContentLoaded', function() {
