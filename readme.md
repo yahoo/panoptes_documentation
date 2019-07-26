@@ -7,7 +7,7 @@ documentation.
 
 `/docs` contains the markdown documentation for [Panoptes](https://www.github.com/yahoo/panoptes)
 
-`/website` contains [Docusaurus.io](https://docusaurus.io/) metadata for building the [documentation website]()
+`/website` contains [Docusaurus.io](https://docusaurus.io/) metadata for building the [documentation website](https://getpanoptes.io)
 
 ## Maintainers
 * Varun Varma: vvarun@verizonmedia.com
