@@ -51,6 +51,9 @@ const siteConfig = {
   onPageNav: 'separate',
   // No .html extensions for paths.
   cleanUrl: true,
+  //  https://docusaurus.io/docs/en/site-config
+  //  The CNAME for your website. It will go into a CNAME file when your site is built.
+  cname: 'getpanoptes.io',
 
   // Open Graph and Twitter card images.
   ogImage: 'img/ogImage.png',
