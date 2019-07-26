@@ -26,7 +26,7 @@ We expect participants in this community to conduct themselves professionally. S
 
 ### Unacceptable Behaviors
 Participants remain in good standing when they do not engage in misconduct or harassment. To elaborate:
-* **Don't be a bigot.** Calling out project members by their identity or background in a negative or insulting manner. This includes, but is not limited to, slurs or insinuations related to protected or suspect classes e.g. race, color, citizenship, national origin, political belief, religion, sexual orientation, gender identity and expression, age, size, culture, ethnicity, genetic features, language, profession, national minority statue, mental or physical ability.
+* **Don't be a bigot.** Calling out project members by their identity or background in a negative or insulting manner. This includes, but is not limited to, slurs or insinuations related to protected or suspect classes e.g. race, color, citizenship, national origin, political belief, religion, sexual orientation, gender identity and expression, age, size, culture, ethnicity, genetic features, language, profession, national minority status, mental or physical ability.
 * **Don't insult.** Insulting remarks about a person’s lifestyle practices.
 * **Don't dox.** Revealing private information about other participants without explicit permission.
 * **Don't intimidate.** Threats of violence or intimidation of any project member.
