@@ -2,6 +2,7 @@
 id: generic-snmp-polling-dsl
 title: Generic SNMP Polling Plugin DSL
 sidebar_label: Generic SNMP Polling Plugin DSL
+author: Ian Holmes
 ---
 ## Background
 
