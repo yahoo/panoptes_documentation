@@ -1,7 +1,7 @@
 ---
-id: plugins
-title: Plugins
-sidebar_label: Plugins
+id: plugin-overview
+title: Plugin Overview
+sidebar_label: Plugin Overview
 ---
 
 Plugins in Panoptes are the key to it's extensibility. In a nutshell, plugins are Python classes which implement 

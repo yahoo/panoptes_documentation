@@ -2,6 +2,17 @@
   "docs": {
     "General Information": ["getting-started"],
     "User Guide": ["user-guide/installation", "user-guide/usage", "user-guide/configuration"],
-    "Panoptes Reference Docs": ["panoptes-reference/objects-and-abstraction", "panoptes-reference/plugins", "panoptes-reference/subsystems","panoptes-reference/system-metrics"]
+    "Panoptes Reference Docs": [
+      "panoptes-reference/objects-and-abstraction",
+      "panoptes-reference/subsystems",
+      "panoptes-reference/system-metrics",
+      {"type": "subcategory", "label": "Plugins",
+        "ids": [
+          "panoptes-reference/plugin-overview",
+          "panoptes-reference/generic-snmp-polling-dsl"
+        ]}
+    ]
   }
 }
+
+
