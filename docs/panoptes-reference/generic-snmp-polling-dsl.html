@@ -1,0 +1,760 @@
+<!DOCTYPE html><html lang="en"><head><meta charSet="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><title>Generic SNMP Polling Plugin DSL · Panoptes</title><meta name="viewport" content="width=device-width"/><meta name="generator" content="Docusaurus"/><meta name="description" content="## Background"/><meta name="docsearch:language" content="en"/><meta property="og:title" content="Generic SNMP Polling Plugin DSL · Panoptes"/><meta property="og:type" content="website"/><meta property="og:url" content="http://getpanoptes.io/"/><meta property="og:description" content="## Background"/><meta property="og:image" content="http://getpanoptes.io/img/ogImage.png"/><meta name="twitter:card" content="summary"/><meta name="twitter:image" content="http://getpanoptes.io/img/site_logo.png"/><link rel="shortcut icon" href="/img/favicon.png"/><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/zenburn.min.css"/><script type="text/javascript" src="https://buttons.github.io/buttons.js"></script><script src="/js/scrollSpy.js"></script><link rel="stylesheet" href="/css/main.css"/><script src="/js/codetabs.js"></script></head><body class="sideNavVisible separateOnPageNav"><div class="fixedHeaderContainer"><div class="headerWrapper wrapper"><header><a href="/"><img class="logo" src="/img/panoptes_eye_black.svg" alt="Panoptes"/><h2 class="headerTitleWithLogo">Panoptes</h2></a><div class="navigationWrapper navigationSlider"><nav class="slidingNav"><ul class="nav-site nav-site-internal"><li class="siteNavGroupActive"><a href="/docs/getting-started" target="_self">Docs</a></li><li class=""><a href="/docs/concepts" target="_self">Concepts</a></li><li class=""><a href="/docs/support" target="_self">Get Help</a></li><li class=""><a href="/docs/contribute" target="_self">Contributing</a></li></ul></nav></div></header></div></div><div class="navPusher"><div class="docMainWrapper wrapper"><div class="docsNavContainer" id="docsNav"><nav class="toc"><div class="toggleNav"><section class="navWrapper wrapper"><div class="navBreadcrumb wrapper"><div class="navToggle" id="navToggler"><div class="hamburger-menu"><div class="line1"></div><div class="line2"></div><div class="line3"></div></div></div><h2><i>›</i><span>Plugins</span></h2><div class="tocToggler" id="tocToggler"><i class="icon-toc"></i></div></div><div class="navGroups"><div class="navGroup"><h3 class="navGroupCategoryTitle">General Information</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/getting-started">Getting Started</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">User Guide</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/user-guide/installation">Installation</a></li><li class="navListItem"><a class="navItem" href="/docs/user-guide/usage">Usage</a></li><li class="navListItem"><a class="navItem" href="/docs/user-guide/configuration">Configure</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Panoptes Reference Docs</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/panoptes-reference/objects-and-abstraction">Objects and Abstraction</a></li><li class="navListItem"><a class="navItem" href="/docs/panoptes-reference/subsystems">Subsystems</a></li><li class="navListItem"><a class="navItem" href="/docs/panoptes-reference/system-metrics">System metrics conventions</a></li><div class="navGroup subNavGroup"><h4 class="navGroupSubcategoryTitle">Plugins</h4><ul><li class="navListItem"><a class="navItem" href="/docs/panoptes-reference/plugin-overview">Plugin Overview</a></li><li class="navListItem navListItemActive"><a class="navItem" href="/docs/panoptes-reference/generic-snmp-polling-dsl">Generic SNMP Polling Plugin DSL</a></li></ul></div></ul></div></div></section></div><script>
+            var coll = document.getElementsByClassName('collapsible');
+            var checkActiveCategory = true;
+            for (var i = 0; i < coll.length; i++) {
+              var links = coll[i].nextElementSibling.getElementsByTagName('*');
+              if (checkActiveCategory){
+                for (var j = 0; j < links.length; j++) {
+                  if (links[j].classList.contains('navListItemActive')){
+                    coll[i].nextElementSibling.classList.toggle('hide');
+                    coll[i].childNodes[1].classList.toggle('rotate');
+                    checkActiveCategory = false;
+                    break;
+                  }
+                }
+              }
+
+              coll[i].addEventListener('click', function() {
+                var arrow = this.childNodes[1];
+                arrow.classList.toggle('rotate');
+                var content = this.nextElementSibling;
+                content.classList.toggle('hide');
+              });
+            }
+
+            document.addEventListener('DOMContentLoaded', function() {
+              createToggler('#navToggler', '#docsNav', 'docsSliderActive');
+              createToggler('#tocToggler', 'body', 'tocActive');
+
+              var headings = document.querySelector('.toc-headings');
+              headings && headings.addEventListener('click', function(event) {
+                var el = event.target;
+                while(el !== headings){
+                  if (el.tagName === 'A') {
+                    document.body.classList.remove('tocActive');
+                    break;
+                  } else{
+                    el = el.parentNode;
+                  }
+                }
+              }, false);
+
+              function createToggler(togglerSelector, targetSelector, className) {
+                var toggler = document.querySelector(togglerSelector);
+                var target = document.querySelector(targetSelector);
+
+                if (!toggler) {
+                  return;
+                }
+
+                toggler.onclick = function(event) {
+                  event.preventDefault();
+
+                  target.classList.toggle(className);
+                };
+              }
+            });
+        </script></nav></div><div class="container mainContainer"><div class="wrapper"><div class="post"><header class="postHeader"><h1 class="postHeaderTitle">Generic SNMP Polling Plugin DSL</h1></header><article><div><span><h2><a class="anchor" aria-hidden="true" id="background"></a><a href="#background" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Background</h2>
+<p>Before the introduction of the Generic SNMP Polling plugin, a plugin author would have to write two plugins to provide monitoring for any given resource: an enrichment plugin to collect enrichments particular to a specific device and a polling plugin that would consume those specific enrichments, and additionally poll for specific metrics.</p>
+<p>After writing a few such plugins, we realized that instead we could write a single enrichment plugin that would output metrics and dimensions collected during the enrichment stage as well as instructions for what metrics to poll (and how to poll them) during the polling stage. This document explains the specifics of how to design an enrichment that will be processed by the Generic SNMP Polling Plugin.</p>
+<h2><a class="anchor" aria-hidden="true" id="reference"></a><a href="#reference" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Reference</h2>
+<p>The schema for such enrichments that the Generic SNMP Polling Plugin requires is as follows:</p>
+<pre><code class="hljs css language-python"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">PanoptesGenericSNMPMetricsEnrichmentSchemaValidator</span><span class="hljs-params">(PanoptesEnrichmentSchemaValidator)</span>:</span>
+   schema = {
+       <span class="hljs-string">'enrichment_label'</span>: {
+           <span class="hljs-string">'type'</span>: <span class="hljs-string">'dict'</span>,
+           <span class="hljs-string">'schema'</span>: {
+               <span class="hljs-string">'oids'</span>: {
+                   <span class="hljs-string">'type'</span>: <span class="hljs-string">'dict'</span>, <span class="hljs-string">'required'</span>: <span class="hljs-literal">True</span>
+               },
+               <span class="hljs-string">'metrics_groups'</span>: {
+                   <span class="hljs-string">'type'</span>: <span class="hljs-string">'list'</span>,
+                   <span class="hljs-string">'required'</span>: <span class="hljs-literal">True</span>,
+                   <span class="hljs-string">'schema'</span>: {
+                       <span class="hljs-string">'type'</span>: <span class="hljs-string">'dict'</span>,
+                       <span class="hljs-string">'schema'</span>: {
+                           <span class="hljs-string">'group_name'</span>: {
+                               <span class="hljs-string">'type'</span>: <span class="hljs-string">'string'</span>,
+                               <span class="hljs-string">'required'</span>: <span class="hljs-literal">True</span>
+                           },
+                           <span class="hljs-string">'dimensions'</span>: {
+                               <span class="hljs-string">'type'</span>: <span class="hljs-string">'dict'</span>, <span class="hljs-string">'required'</span>: <span class="hljs-literal">False</span>
+                           },
+                           <span class="hljs-string">'metrics'</span>: {
+                               <span class="hljs-string">'type'</span>: <span class="hljs-string">'dict'</span>, <span class="hljs-string">'required'</span>: <span class="hljs-literal">True</span>
+                           }
+                       }
+                   }
+               }
+           }
+       }
+   }
+</code></pre>
+<p>At its top level, and enrichment must define a set of oids and a set of metrics_groups. Each entry in oids is referenced by one or more entry in metrics_groups.</p>
+<h3><a class="anchor" aria-hidden="true" id="oids"></a><a href="#oids" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Oids</h3>
+<p>The following keys are defined for each entry in the oids dictionary:</p>
+<table>
+<thead>
+<tr><th>Key</th><th>Acceptable Values</th><th>Required?</th></tr>
+</thead>
+<tbody>
+<tr><td>method</td><td>&quot;static&quot;, &quot;get&quot;, &quot;bulk_walk&quot;</td><td>Yes</td></tr>
+<tr><td>values</td><td>Dict mapping indices to values</td><td>Yes, if method is &quot;static&quot;</td></tr>
+<tr><td>oid</td><td>String dot-delimited OID</td><td>Yes, if method is &quot;get&quot; or &quot;bulk_walk&quot;</td></tr>
+<tr><td>index_transform</td><td>Dict mapping indices from <strong>the current</strong> oid table to those used by the other (dimension or metric) oid tables.</td><td></td></tr>
+</tbody>
+</table>
+<p>According to these rules, the following are acceptable entries for oids:</p>
+<pre><code class="hljs css language-json">{
+  <span class="hljs-attr">"oids"</span>: {
+    <span class="hljs-attr">"cpu_name"</span>: {
+      <span class="hljs-attr">"method"</span>: <span class="hljs-string">"static"</span>,
+      <span class="hljs-attr">"values"</span>: {
+        <span class="hljs-attr">"1"</span>: <span class="hljs-string">"Switch System"</span>
+      }
+    },
+    <span class="hljs-attr">"cpu_util"</span>: {
+      <span class="hljs-attr">"method"</span>: <span class="hljs-string">"bulk_walk"</span>,
+      <span class="hljs-attr">"oid"</span>: <span class="hljs-string">".1.3.6.1.4.1.9.9.109.1.1.1.1.8"</span>
+    },
+    <span class="hljs-attr">"system_up_time"</span>: {
+      <span class="hljs-attr">"method"</span>: <span class="hljs-string">"get"</span>,
+      <span class="hljs-attr">"oid"</span>: <span class="hljs-string">".1.3.6.1.2.1.1.3.0"</span>
+    },
+    <span class="hljs-attr">"memory_total"</span>: {
+      <span class="hljs-attr">"method"</span>: <span class="hljs-string">"static"</span>,
+      <span class="hljs-attr">"values"</span>: {
+        <span class="hljs-attr">"7.1.0.0"</span>: <span class="hljs-number">2047868928</span>,
+        <span class="hljs-attr">"9.1.0.0"</span>: <span class="hljs-number">8154775552</span>
+      }
+    }
+  }
+}
+</code></pre>
+<h3><a class="anchor" aria-hidden="true" id="metrics-groups"></a><a href="#metrics-groups" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Metrics Groups</h3>
+<p>The following keys are defined for each dictionary entry in the metrics_groups list:</p>
+<table>
+<thead>
+<tr><th>Key</th><th>Acceptable Values</th><th>Required?</th></tr>
+</thead>
+<tbody>
+<tr><td>group_name</td><td>String specifying group name; Could be anything, but should adhere to standards.</td><td>Yes</td></tr>
+<tr><td>dimensions</td><td>Dict mapping dimension names to values</td><td>No</td></tr>
+<tr><td>metrics</td><td>Dict mapping metric names to values</td><td>Yes</td></tr>
+</tbody>
+</table>
+<p>Take for example, the following simple use case:</p>
+<pre><code class="hljs css language-json">{
+  <span class="hljs-attr">"dimensions"</span>: {
+    <span class="hljs-attr">"memory_type"</span>: <span class="hljs-string">"memory_name.$index"</span>
+  },
+  <span class="hljs-attr">"group_name"</span>: <span class="hljs-string">"memory"</span>,
+  <span class="hljs-attr">"metrics"</span>: {
+    <span class="hljs-attr">"memory_total"</span>: {
+      <span class="hljs-attr">"metric_type"</span>: <span class="hljs-string">"gauge"</span>,
+      <span class="hljs-attr">"value"</span>: <span class="hljs-string">"memory_total.$index"</span>
+    },
+    <span class="hljs-attr">"memory_used"</span>: {
+      <span class="hljs-attr">"metric_type"</span>: <span class="hljs-string">"gauge"</span>,
+      <span class="hljs-attr">"value"</span>: <span class="hljs-string">"memory_used.$index"</span>
+    }
+  }
+}
+</code></pre>
+<h4><a class="anchor" aria-hidden="true" id="group_name"></a><a href="#group_name" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>group_name</h4>
+<p>The group name should be a simple, succinct description of what type of data can be found in each metrics group. In the above example, the group name is &quot;memory&quot; because the metrics group output by the Generic SNMP Polling Plugin will contain a dimension &quot;memory_type&quot; and metrics &quot;memory_total&quot; and &quot;memory_used&quot;. Other example group names used in practice are &quot;environment&quot;, &quot;cpu&quot;, &quot;status&quot;, &quot;nat&quot;, &quot;session&quot;, &quot;interface&quot;, etc. While a group_name may in theory be any string, they should adhere to the standards found here.</p>
+<h4><a class="anchor" aria-hidden="true" id="dimensions-and-metrics"></a><a href="#dimensions-and-metrics" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>dimensions and metrics</h4>
+<p>Both &quot;dimensions&quot; and &quot;metrics&quot; contain the same set of acceptable keys and values. The DSL defines the following keys:</p>
+<table>
+<thead>
+<tr><th>Key</th><th>Acceptable Values</th><th>Default Value?</th></tr>
+</thead>
+<tbody>
+<tr><td>type</td><td>‘Integer’, ‘float’, ‘string’, and others</td><td>Corresponding type of value provided prior to applying a transform</td></tr>
+<tr><td>metric_type</td><td>‘Gauge’ or ‘counter’</td><td>‘gauge’</td></tr>
+<tr><td>value</td><td>Primitive type or string containing valid python expression or DSL expression</td><td>None, but see <a href="#using-the-dsl-shorthand">Using the DSL Shorthand</a> below.</td></tr>
+<tr><td>indices_from</td><td>String matching key in oids</td><td></td></tr>
+<tr><td>indices</td><td>List index strings, used by related table, to be queried</td><td></td></tr>
+<tr><td>transform</td><td>String containing python code to be evaluated by the Generic SNMP Polling Plugin</td><td></td></tr>
+</tbody>
+</table>
+<h3><a class="anchor" aria-hidden="true" id="examples"></a><a href="#examples" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Examples</h3>
+<p>The best way to understand this functionality is to step through a number of use cases. Consider the following trivial example:</p>
+<h4><a class="anchor" aria-hidden="true" id="top-level-metric"></a><a href="#top-level-metric" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Top-level Metric</h4>
+<pre><code class="hljs css language-json">{
+  <span class="hljs-attr">"metrics_groups"</span>: [
+    {
+      <span class="hljs-attr">"dimensions"</span>: {},
+      <span class="hljs-attr">"group_name"</span>: <span class="hljs-string">"environment"</span>,
+      <span class="hljs-attr">"metrics"</span>: {
+        <span class="hljs-attr">"fans_total"</span>: {
+          <span class="hljs-attr">"metric_type"</span>: <span class="hljs-string">"gauge"</span>,
+          <span class="hljs-attr">"type"</span>: <span class="hljs-string">"integer"</span>,
+          <span class="hljs-attr">"value"</span>: <span class="hljs-number">1</span>
+        }
+      }
+    }
+  ],
+  <span class="hljs-attr">"oids"</span>: {}
+}
+</code></pre>
+<p>In this case, the only <em>metric</em> we have assigned is &quot;fans_total,&quot; which has a hard-coded value of &quot;1&quot;. Our <em>group_name</em> (by convention) is &quot;environment&quot;, which encompasses metrics concerning fans, power units, and temperature. Finally, <em>dimensions</em> is assigned to an empty dictionary, so each metric in <em>metrics</em> refers to the device as a whole. (This makes intuitive sense, as we would expect the total number of fans to be reported &quot;per device&quot; rather than by any subdivided unit.) Because this metric refers to the device as a whole and does not have an associated dimension, in Panoptes parlance, we call this a &quot;top level&quot; metric.</p>
+<p>Here, <em>oids</em> is assigned to an empty dictionary, because there are no values to look up; the <em>value</em> for &quot;fans_total&quot; is hard-coded.</p>
+<h4><a class="anchor" aria-hidden="true" id="simple-table-lookup"></a><a href="#simple-table-lookup" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Simple Table Lookup</h4>
+<p>This enrichment defines a single entry for metrics_groups of <em>group_name</em> &quot;memory&quot;, and three entries for <em>oids</em>: &quot;memory_name&quot;, &quot;memory_total&quot;, and &quot;memory_used.&quot; The syntax used for each &quot;value&quot; in each dimension and metric is the same:</p>
+<p>{table name}.$index</p>
+<p>This means, &quot;<em>get the value in {table name} for each index in {table name}</em>&quot;<br>
+(The Bash-like ‘$’ denotes &quot;index&quot; as a DSL variable.)</p>
+<p>For the dimension &quot;memory_type,&quot; the Generic SNMP Polling Plugin will reference the oid dictionary named &quot;memory_name&quot;. In this case, &quot;memory_name&quot; is statically defined (as oids used for dimensions will typically be), but could also be generated by the polling plugin at runtime (as is the case for &quot;memory_used&quot;).</p>
+<p>For each index in the table(s) reference in dimensions, a separate metrics group will be produced. Because &quot;memory_name&quot; contains only one key-value pair, the results generated by the Generic SNMP Polling PLugin contains only one metrics group:</p>
+<pre><code class="hljs css language-json">[
+  {
+    <span class="hljs-attr">"metrics_group_interval"</span>: <span class="hljs-number">60</span>,
+    <span class="hljs-attr">"resource"</span>: {
+      <span class="hljs-attr">"resource_site"</span>: <span class="hljs-string">"test_site"</span>,
+      <span class="hljs-attr">"resource_id"</span>: <span class="hljs-string">"test_id"</span>,
+      <span class="hljs-attr">"resource_class"</span>: <span class="hljs-string">"network"</span>,
+      <span class="hljs-attr">"resource_plugin"</span>: <span class="hljs-string">"dummy"</span>,
+      <span class="hljs-attr">"resource_subclass"</span>: <span class="hljs-string">"test_subclass"</span>,
+      <span class="hljs-attr">"resource_endpoint"</span>: <span class="hljs-string">"127.0.0.1"</span>,
+      <span class="hljs-attr">"resource_metadata"</span>: {
+        <span class="hljs-attr">"model"</span>: <span class="hljs-string">"model"</span>,
+        <span class="hljs-attr">"_resource_ttl"</span>: <span class="hljs-string">"604800"</span>
+      },
+      <span class="hljs-attr">"resource_type"</span>: <span class="hljs-string">"test_type"</span>},
+    <span class="hljs-attr">"dimensions"</span>: [
+      {
+        <span class="hljs-attr">"dimension_name"</span>: <span class="hljs-string">"memory_type"</span>,
+        <span class="hljs-attr">"dimension_value"</span>: <span class="hljs-string">"Processor"</span>
+      }
+    ],
+    <span class="hljs-attr">"metrics_group_type"</span>: <span class="hljs-string">"memory"</span>,
+    <span class="hljs-attr">"metrics"</span>: [
+      {
+        <span class="hljs-attr">"metric_type"</span>: <span class="hljs-string">"gauge"</span>,
+        <span class="hljs-attr">"metric_name"</span>: <span class="hljs-string">"memory_used"</span>,
+        <span class="hljs-attr">"metric_value"</span>: <span class="hljs-number">190000700</span>
+      },
+      {
+        <span class="hljs-attr">"metric_type"</span>: <span class="hljs-string">"gauge"</span>,
+        <span class="hljs-attr">"metric_name"</span>: <span class="hljs-string">"memory_total"</span>,
+        <span class="hljs-attr">"metric_value"</span>: <span class="hljs-number">1002273800</span>
+      }
+    ],
+    <span class="hljs-attr">"metrics_group_schema_version"</span>: <span class="hljs-string">"0.2"</span>
+  }
+]
+</code></pre>
+<h4><a class="anchor" aria-hidden="true" id="evaluated-value"></a><a href="#evaluated-value" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Evaluated Value</h4>
+<p>Sometimes we need more to compute a value with more complexity than a simple table lookup. Thus &quot;value&quot;s may contain references to multiple tables in addition to python code of arbitrary complexity. Consider the following values:</p>
+<pre><code class="hljs css language-json">{
+  <span class="hljs-attr">"metrics_groups"</span>: [
+    {
+      <span class="hljs-attr">"dimensions"</span>: {},
+      <span class="hljs-attr">"group_name"</span>: <span class="hljs-string">"environment"</span>,
+      <span class="hljs-attr">"metrics"</span>: {
+        <span class="hljs-attr">"fans_ok"</span>: {
+          <span class="hljs-attr">"metric_type"</span>: <span class="hljs-string">"gauge"</span>,
+          <span class="hljs-attr">"value"</span>: <span class="hljs-string">"len([x for x in fan_statuses.values() if x == '2'])"</span>
+        },
+        <span class="hljs-attr">"fans_total"</span>: <span class="hljs-number">1</span>
+      }
+    },
+    {
+      <span class="hljs-attr">"dimensions"</span>: {},
+      <span class="hljs-attr">"group_name"</span>: <span class="hljs-string">"environment"</span>,
+      <span class="hljs-attr">"metrics"</span>: {
+        <span class="hljs-attr">"power_units_on"</span>: {
+          <span class="hljs-attr">"metric_type"</span>: <span class="hljs-string">"gauge"</span>,
+          <span class="hljs-attr">"value"</span>: <span class="hljs-string">"len([(x,y) for (x,y) in entity_fru_control.items() if x in power_supplies and y in ['2', '9', '12']])"</span>,
+        },
+        <span class="hljs-attr">"power_units_total"</span>: <span class="hljs-number">2</span>
+      }
+    },
+    {
+      <span class="hljs-attr">"dimensions"</span>: {
+        <span class="hljs-attr">"sensor"</span>: <span class="hljs-string">"temp_sensor_name.$index"</span>
+      },
+      <span class="hljs-attr">"group_name"</span>: <span class="hljs-string">"environment"</span>,
+      <span class="hljs-attr">"metrics"</span>: {
+        <span class="hljs-attr">"temperature_fahrenheit"</span>: {
+          <span class="hljs-attr">"indices_from"</span>: <span class="hljs-string">"temp_sensor_scales"</span>,
+          <span class="hljs-attr">"metric_type"</span>: <span class="hljs-string">"gauge"</span>,
+          <span class="hljs-attr">"transform"</span>: <span class="hljs-string">"lambda x: round((x * 1.8) + 32, 2)"</span>,
+          <span class="hljs-attr">"type"</span>: <span class="hljs-string">"float"</span>,
+          <span class="hljs-attr">"value"</span>: <span class="hljs-string">"int(ent_sensor_values.$index) * temp_sensor_scales.$index"</span>
+        }
+      }
+    }
+  ]
+}
+</code></pre>
+<p>This allows the user to write expressions tailored to the device data he is working with. For example, in the &quot;value&quot; expression for &quot;power_units_on&quot;, <code>y in ['2', '9', '12']</code> is a check for status codes functionally equivalent to &quot;on&quot; for that specific type of device.</p>
+<p>Note also that table lookups may need to be explicitly type-cast. In the above &quot;value&quot; for &quot;temperature_fahrenheit&quot;, &quot;ent_sensor_values.$index&quot; would default to a &quot;string&quot; type, so we must explicitly cast it as an &quot;int&quot;.</p>
+<h4><a class="anchor" aria-hidden="true" id="simple-transform"></a><a href="#simple-transform" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Simple Transform</h4>
+<pre><code class="hljs css language-json">{
+  <span class="hljs-attr">"metrics_groups"</span>: [
+    {
+      <span class="hljs-attr">"dimensions"</span>: {
+        <span class="hljs-attr">"sensor"</span>: <span class="hljs-string">"temp_sensor_name.$index"</span>
+      },
+      <span class="hljs-attr">"group_name"</span>: <span class="hljs-string">"environment"</span>,
+      <span class="hljs-attr">"metrics"</span>: {
+        <span class="hljs-attr">"temperature_fahrenheit"</span>: {
+          <span class="hljs-attr">"metric_type"</span>: <span class="hljs-string">"gauge"</span>,
+          <span class="hljs-attr">"transform"</span>: <span class="hljs-string">"lambda x: round((x * 1.8) + 32, 2) if x != 0 else 0.0"</span>,
+          <span class="hljs-attr">"type"</span>: <span class="hljs-string">"float"</span>,
+          <span class="hljs-attr">"value"</span>: <span class="hljs-string">"temp_sensor_values.$index"</span>
+        }
+      }
+    }
+  ],
+  <span class="hljs-attr">"oids"</span>: {
+    <span class="hljs-attr">"temp_sensor_name"</span>: {
+      <span class="hljs-attr">"method"</span>: <span class="hljs-string">"static"</span>,
+      <span class="hljs-attr">"values"</span>: {
+        <span class="hljs-attr">"2.1.1.0"</span>: <span class="hljs-string">"Power Supply 0"</span>,
+        <span class="hljs-attr">"2.1.2.0"</span>: <span class="hljs-string">"Power Supply 1"</span>,
+        <span class="hljs-attr">"4.1.1.0"</span>: <span class="hljs-string">"Fan Tray 0"</span>,
+        <span class="hljs-attr">"4.1.2.0"</span>: <span class="hljs-string">"Fan Tray 1"</span>,
+        <span class="hljs-attr">"4.1.3.0"</span>: <span class="hljs-string">"Fan Tray 2"</span>,
+        <span class="hljs-attr">"7.1.0.0"</span>: <span class="hljs-string">"FPC: QFX10002-36Q @ 0/*/*"</span>,
+        <span class="hljs-attr">"8.1.1.0"</span>: <span class="hljs-string">"PIC: 36X40G @ 0/0/*"</span>,
+        <span class="hljs-attr">"9.1.0.0"</span>: <span class="hljs-string">"Routing Engine 0"</span>
+      }
+    },
+    <span class="hljs-attr">"temp_sensor_values"</span>: {
+      <span class="hljs-attr">"method"</span>: <span class="hljs-string">"bulk_walk"</span>,
+      <span class="hljs-attr">"oid"</span>: <span class="hljs-string">".1.3.6.1.4.1.2636.3.1.13.1.7"</span>
+    }
+  }
+}
+</code></pre>
+<p>Sometimes we want to perform a transformation on a value calculated or read from a table, such as when converting temperature values from Celsius to Fahrenheit as in the above enrichment. The value for the &quot;transform&quot; key is python code to be run by <em>eval</em> in the Generic SNMP Polling Plugin for each <em>value</em>, in this case read in from &quot;temp_sensor_values&quot;. This code rounds the value to two decimal places, and sets the output to <em>0.0</em> if the value, <em>x</em>, is <em>0</em>.</p>
+<p>Note the value of &quot;type&quot; refers to the type of the value passed as an argument to &quot;transform&quot;, not the type of the final output (although in this case, both happen to be <em>float</em>.)</p>
+<h4><a class="anchor" aria-hidden="true" id="report-metrics-for-only-certain-indices"></a><a href="#report-metrics-for-only-certain-indices" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Report metrics for only certain indices</h4>
+<h5><a class="anchor" aria-hidden="true" id="using-indices"></a><a href="#using-indices" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Using &quot;indices&quot;</h5>
+<p>In the previous example, 8 metrics groups would be reported -- one for each key-value pair in the dimension table, &quot;temp_sensor_name&quot; (provided all indices are also present in &quot;temp_sensor_values&quot;). If we are only interested in the temperature metrics for the power supplies, we could amend the &quot;metrics_groups&quot; definition as follows:</p>
+<pre><code class="hljs css language-json">{
+  <span class="hljs-attr">"metrics_groups"</span>: [
+    {
+      <span class="hljs-attr">"dimensions"</span>: {
+        <span class="hljs-attr">"sensor"</span>: <span class="hljs-string">"temp_sensor_name.$index"</span>
+      },
+      <span class="hljs-attr">"group_name"</span>: <span class="hljs-string">"environment"</span>,
+      <span class="hljs-attr">"metrics"</span>: {
+        <span class="hljs-attr">"temperature_fahrenheit"</span>: {
+          <span class="hljs-attr">"metric_type"</span>: <span class="hljs-string">"gauge"</span>,
+          <span class="hljs-attr">"indices"</span>: [
+            <span class="hljs-string">"2.1.1.0"</span>,
+            <span class="hljs-string">"2.1.2.0"</span>
+          ],
+          <span class="hljs-attr">"transform"</span>: <span class="hljs-string">"lambda x: round((x * 1.8) + 32, 2) if x != 0 else 0.0"</span>,
+          <span class="hljs-attr">"type"</span>: <span class="hljs-string">"float"</span>,
+          <span class="hljs-attr">"value"</span>: <span class="hljs-string">"temp_sensor_values.$index"</span>
+        }
+      }
+    }
+  ]
+}
+</code></pre>
+<p>and our output metrics_groups would then be</p>
+<pre><code class="hljs css language-json">[
+  {
+    <span class="hljs-attr">"metrics_group_interval"</span>: <span class="hljs-number">60</span>,
+    <span class="hljs-attr">"resource"</span>: {},
+    <span class="hljs-attr">"dimensions"</span>: [
+      {
+        <span class="hljs-attr">"dimension_name"</span>: <span class="hljs-string">"sensor"</span>,
+        <span class="hljs-attr">"dimension_value"</span>: <span class="hljs-string">"Power Supply 0"</span>
+      }
+    ],
+    <span class="hljs-attr">"metrics_group_type"</span>: <span class="hljs-string">"environment"</span>,
+    <span class="hljs-attr">"metrics"</span>: [
+      {
+        <span class="hljs-attr">"metric_type"</span>: <span class="hljs-string">"gauge"</span>,
+        <span class="hljs-attr">"metric_name"</span>: <span class="hljs-string">"temperature_fahrenheit"</span>,
+        <span class="hljs-attr">"metric_value"</span>: <span class="hljs-number">93.2</span>
+      }
+    ],
+    <span class="hljs-attr">"metrics_group_schema_version"</span>: <span class="hljs-string">"0.2"</span>
+  },
+  {
+    <span class="hljs-attr">"metrics_group_interval"</span>: <span class="hljs-number">60</span>,
+    <span class="hljs-attr">"resource"</span>: {},
+    <span class="hljs-attr">"dimensions"</span>: [
+      {
+        <span class="hljs-attr">"dimension_name"</span>: <span class="hljs-string">"sensor"</span>,
+        <span class="hljs-attr">"dimension_value"</span>: <span class="hljs-string">"Power Supply 1"</span>
+      }
+    ],
+    <span class="hljs-attr">"metrics_group_type"</span>: <span class="hljs-string">"environment"</span>,
+    <span class="hljs-attr">"metrics"</span>: [
+      {
+        <span class="hljs-attr">"metric_type"</span>: <span class="hljs-string">"gauge"</span>,
+        <span class="hljs-attr">"metric_name"</span>: <span class="hljs-string">"temperature_fahrenheit"</span>,
+        <span class="hljs-attr">"metric_value"</span>: <span class="hljs-number">94.1</span>
+      }
+    ],
+    <span class="hljs-attr">"metrics_group_schema_version"</span>: <span class="hljs-string">"0.2"</span>
+  }
+]
+</code></pre>
+<p><em>Note: &quot;resource&quot; entries omitted for brevity.</em></p>
+<h4><a class="anchor" aria-hidden="true" id="using-indices_from"></a><a href="#using-indices_from" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Using &quot;indices_from&quot;</h4>
+<p>Similarly, if we want to limit the metrics groups we output to indices found in a certain table, we can use the &quot;indices_from&quot; key. This is particularly useful when we are performing a calculation based upon data from two or more tables, where at least one's indices are a subset of the others'. Consider the prior example</p>
+<pre><code class="hljs css language-json">{
+  <span class="hljs-attr">"dimensions"</span>: {
+    <span class="hljs-attr">"sensor"</span>: {
+      <span class="hljs-attr">"value"</span>: <span class="hljs-string">"temp_sensor_name.$index"</span>
+    }
+  },
+  <span class="hljs-attr">"group_name"</span>: <span class="hljs-string">"environment"</span>,
+  <span class="hljs-attr">"metrics"</span>: {
+    <span class="hljs-attr">"temperature_fahrenheit"</span>: {
+      <span class="hljs-attr">"indices_from"</span>: <span class="hljs-string">"temp_sensor_scales"</span>,
+      <span class="hljs-attr">"metric_type"</span>: <span class="hljs-string">"gauge"</span>,
+      <span class="hljs-attr">"transform"</span>: <span class="hljs-string">"lambda x: round((x * 1.8) + 32, 2)"</span>,
+      <span class="hljs-attr">"type"</span>: <span class="hljs-string">"float"</span>,
+      <span class="hljs-attr">"value"</span>: <span class="hljs-string">"int(ent_sensor_values.$index) * temp_sensor_scales.$index"</span>
+    }
+  }
+}
+</code></pre>
+<p>Here, the indices in &quot;temp_sensor_scales&quot; happen to be a subset of the indices in &quot;ent_sensor_values&quot; -- in this case because the latter contains values for all sensors in the device (&quot;power&quot; and &quot;fan&quot; in addition to &quot;temperature&quot;).</p>
+<blockquote>
+<p>Note: If &quot;indices_from&quot; or &quot;indices&quot; is not present, the DSL will attempt to use indices for the first (i.e. left-most) table in the expression.</p>
+</blockquote>
+<p>In this case, because &quot;ent_sensor_values&quot; contains indices not found in &quot;temp_sensor_scales&quot;, the configuration would cause multiple exceptions were &quot;indices_from&quot; not specified. Here, we could fix this by re-ordering the table names in the &quot;value&quot; expression, but this will not always be possible, so it is better practice to be as explicit as possible with the configuration by using &quot;indices_from&quot;.</p>
+<h4><a class="anchor" aria-hidden="true" id="using-index_transform"></a><a href="#using-index_transform" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Using &quot;index_transform&quot;</h4>
+<p>Sometimes the indices from one table will not match the indices used in another, even if the data in each are related. In these cases, it will be necessary to define an <em>index_transform</em> in the <em>oids</em> section. Take the following:</p>
+<pre><code class="hljs css language-json">{
+  <span class="hljs-attr">"metrics_groups"</span>: [
+    {
+      <span class="hljs-attr">"dimensions"</span>: {
+        <span class="hljs-attr">"cpu_name"</span>: {
+          <span class="hljs-attr">"value"</span>: <span class="hljs-string">"cpu_name.$index"</span>
+        },
+        <span class="hljs-attr">"cpu_no"</span>: {
+          <span class="hljs-attr">"value"</span>: <span class="hljs-string">"cpu_no.$index"</span>
+        },
+        <span class="hljs-attr">"cpu_type"</span>: {
+          <span class="hljs-attr">"value"</span>: <span class="hljs-string">"'ctrl'"</span>
+        }
+      },
+      <span class="hljs-attr">"group_name"</span>: <span class="hljs-string">"cpu"</span>,
+      <span class="hljs-attr">"metrics"</span>: {
+        <span class="hljs-attr">"cpu_utilization"</span>: {
+          <span class="hljs-attr">"metric_type"</span>: <span class="hljs-string">"gauge"</span>,
+          <span class="hljs-attr">"value"</span>: <span class="hljs-string">"cpu_util.$index"</span>
+        }
+      }
+    }
+  ],
+  <span class="hljs-attr">"oids"</span>: {
+    <span class="hljs-attr">"cpu_name"</span>: {
+      <span class="hljs-attr">"method"</span>: <span class="hljs-string">"static"</span>,
+      <span class="hljs-attr">"values"</span>: {
+        <span class="hljs-attr">"22"</span>: <span class="hljs-string">"48X1GE, 4X10G Supervior in Fixed Module-1"</span>
+      }
+    },
+    <span class="hljs-attr">"cpu_no"</span>: {
+      <span class="hljs-attr">"method"</span>: <span class="hljs-string">"static"</span>,
+      <span class="hljs-attr">"values"</span>: {
+        <span class="hljs-attr">"22"</span>: <span class="hljs-string">"Module 1"</span>
+      }
+    },
+    <span class="hljs-attr">"cpu_util"</span>: {
+      <span class="hljs-attr">"index_transform"</span>: {
+        <span class="hljs-attr">"0"</span>: <span class="hljs-string">"26584"</span>,
+        <span class="hljs-attr">"1"</span>: <span class="hljs-string">"22"</span>,
+        <span class="hljs-attr">"10"</span>: <span class="hljs-string">"4959"</span>
+      },
+      <span class="hljs-attr">"method"</span>: <span class="hljs-string">"bulk_walk"</span>,
+      <span class="hljs-attr">"oid"</span>: <span class="hljs-string">".1.3.6.1.4.1.9.9.109.1.1.1.1.8"</span>
+    }
+  }
+}
+</code></pre>
+<p>Here, the oid table for &quot;cpu_util&quot; uses the indices &quot;0&quot;, &quot;1&quot;, and &quot;10&quot;, while the other oid tables contain only &quot;22&quot;. The value for <em>.1.3.6.1.4.1.9.9.109.1.1.1.1.8.1</em> will be polled and related to the values for index <em>22</em> in &quot;cpu_no&quot; and &quot;cpu_name&quot;. The output (omitting irrelevant key-value pairs) is:</p>
+<pre><code class="hljs css language-json">{
+  <span class="hljs-attr">"dimensions"</span>: [
+    {
+      <span class="hljs-attr">"dimension_name"</span>: <span class="hljs-string">"cpu_name"</span>,
+      <span class="hljs-attr">"dimension_value"</span>: <span class="hljs-string">"48X1GE, 4X10G Supervior in Fixed Module-1"</span>
+    },
+    {
+      <span class="hljs-attr">"dimension_name"</span>: <span class="hljs-string">"cpu_no"</span>,
+      <span class="hljs-attr">"dimension_value"</span>: <span class="hljs-string">"Module 1"</span>
+    },
+    {
+      <span class="hljs-attr">"dimension_name"</span>: <span class="hljs-string">"cpu_type"</span>,
+      <span class="hljs-attr">"dimension_value"</span>: <span class="hljs-string">"ctrl"</span>
+    }
+  ],
+  <span class="hljs-attr">"metrics_group_type"</span>: <span class="hljs-string">"cpu"</span>,
+  <span class="hljs-attr">"metrics"</span>: [
+    {
+      <span class="hljs-attr">"metric_type"</span>: <span class="hljs-string">"gauge"</span>,
+      <span class="hljs-attr">"metric_name"</span>: <span class="hljs-string">"cpu_utilization"</span>,
+      <span class="hljs-attr">"metric_value"</span>: <span class="hljs-number">5</span>
+    }
+  ]
+}
+</code></pre>
+<p>Note that because each metrics group is built using indices from the dimensions, the extraneous indices (here, &quot;0&quot; and &quot;10&quot;) are simply ignored by the Generic SNMP Polling Plugin.</p>
+<h3><a class="anchor" aria-hidden="true" id="using-the-dsl-shorthand"></a><a href="#using-the-dsl-shorthand" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Using the DSL Shorthand</h3>
+<p>Because the DSL is highly repetitive, it can be very redundant. Thus, there are some shorthand expressions to help reduce the length and complexity of enrichments. Let's start with a fully-expanded enrichment and make it more concise, step-by-step:</p>
+<pre><code class="hljs css language-json">{
+  <span class="hljs-attr">"metrics_groups"</span>: [
+    {
+      <span class="hljs-attr">"dimensions"</span>: {
+        <span class="hljs-attr">"sensor"</span>: {
+          <span class="hljs-attr">"value"</span>: <span class="hljs-string">"temp_sensor_name.$index"</span>,
+          <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>
+        }
+      },
+      <span class="hljs-attr">"group_name"</span>: <span class="hljs-string">"environment"</span>,
+      <span class="hljs-attr">"metrics"</span>: {
+        <span class="hljs-attr">"temperature_fahrenheit"</span>: {
+          <span class="hljs-attr">"indices_from"</span>: <span class="hljs-string">"temp_sensor_scales"</span>,
+          <span class="hljs-attr">"metric_type"</span>: <span class="hljs-string">"gauge"</span>,
+          <span class="hljs-attr">"transform"</span>: <span class="hljs-string">"lambda x: round((x * 1.8) + 32, 2)"</span>,
+          <span class="hljs-attr">"type"</span>: <span class="hljs-string">"float"</span>,
+          <span class="hljs-attr">"value"</span>: <span class="hljs-string">"int(ent_sensor_values.$index) * temp_sensor_scales.$index"</span>
+        }
+      }
+    },
+    {
+      <span class="hljs-attr">"dimensions"</span>: {},
+      <span class="hljs-attr">"group_name"</span>: <span class="hljs-string">"environment"</span>,
+      <span class="hljs-attr">"metrics"</span>: {
+        <span class="hljs-attr">"fans_ok"</span>: {
+          <span class="hljs-attr">"metric_type"</span>: <span class="hljs-string">"gauge"</span>,
+          <span class="hljs-attr">"type"</span>: <span class="hljs-string">"integer"</span>,
+          <span class="hljs-attr">"value"</span>: <span class="hljs-string">"len([x for x in cefc_fru_fan.values() if x == '2'])"</span>
+        },
+        <span class="hljs-attr">"fans_total"</span>: {
+          <span class="hljs-attr">"metric_type"</span>: <span class="hljs-string">"gauge"</span>,
+          <span class="hljs-attr">"type"</span>: <span class="hljs-string">"integer"</span>,
+          <span class="hljs-attr">"value"</span>: <span class="hljs-number">1</span>
+        }
+      }
+    },
+    {
+      <span class="hljs-attr">"dimensions"</span>: {},
+      <span class="hljs-attr">"group_name"</span>: <span class="hljs-string">"environment"</span>,
+      <span class="hljs-attr">"metrics"</span>: {
+        <span class="hljs-attr">"power_units_on"</span>: {
+          <span class="hljs-attr">"metric_type"</span>: <span class="hljs-string">"gauge"</span>,
+          <span class="hljs-attr">"type"</span>: <span class="hljs-string">"integer"</span>,
+          <span class="hljs-attr">"value"</span>: <span class="hljs-string">"len([(x,y) for (x,y) in entity_fru_control.items() if x in power_supplies and y in ['2', '9', '12']])"</span>
+        },
+        <span class="hljs-attr">"power_units_total"</span>: {
+          <span class="hljs-attr">"metric_type"</span>: <span class="hljs-string">"gauge"</span>,
+          <span class="hljs-attr">"type"</span>: <span class="hljs-string">"integer"</span>,
+          <span class="hljs-attr">"value"</span>: <span class="hljs-number">2</span>
+        }
+      }
+    },
+    {
+      <span class="hljs-attr">"dimensions"</span>: {
+        <span class="hljs-attr">"cpu_name"</span>: {
+          <span class="hljs-attr">"value"</span>: <span class="hljs-string">"cpu_name.$index"</span>,
+          <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>
+        },
+        <span class="hljs-attr">"cpu_no"</span>: {
+          <span class="hljs-attr">"value"</span>: <span class="hljs-string">"cpu_no.$index"</span>,
+          <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>
+        },
+        <span class="hljs-attr">"cpu_type"</span>: {
+          <span class="hljs-attr">"value"</span>: <span class="hljs-string">"'ctrl'"</span>,
+          <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>
+        }
+      },
+      <span class="hljs-attr">"group_name"</span>: <span class="hljs-string">"cpu"</span>,
+      <span class="hljs-attr">"metrics"</span>: {
+        <span class="hljs-attr">"cpu_utilization"</span>: {
+          <span class="hljs-attr">"metric_type"</span>: <span class="hljs-string">"gauge"</span>,
+          <span class="hljs-attr">"type"</span>: <span class="hljs-string">"integer"</span>,
+          <span class="hljs-attr">"value"</span>: <span class="hljs-string">"cpu_util.$index"</span>
+        }
+      }
+    },
+    {
+      <span class="hljs-attr">"dimensions"</span>: {
+        <span class="hljs-attr">"memory_type"</span>: {
+          <span class="hljs-attr">"value"</span>: <span class="hljs-string">"memory_type.$index"</span>,
+          <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>
+        }
+      },
+      <span class="hljs-attr">"group_name"</span>: <span class="hljs-string">"memory"</span>,
+      <span class="hljs-attr">"metrics"</span>: {
+        <span class="hljs-attr">"memory_total"</span>: {
+          <span class="hljs-attr">"metric_type"</span>: <span class="hljs-string">"gauge"</span>,
+          <span class="hljs-attr">"type"</span>: <span class="hljs-string">"integer"</span>,
+          <span class="hljs-attr">"value"</span>: <span class="hljs-string">"memory_total.$index"</span>
+        },
+        <span class="hljs-attr">"memory_used"</span>: {
+          <span class="hljs-attr">"metric_type"</span>: <span class="hljs-string">"gauge"</span>,
+          <span class="hljs-attr">"type"</span>: <span class="hljs-string">"integer"</span>,
+          <span class="hljs-attr">"value"</span>: <span class="hljs-string">"memory_used.$index"</span>
+        }
+      }
+    }
+  ]
+}
+</code></pre>
+<p>As mentioned above, some of the keys in the &quot;metrics&quot; and &quot;dimensions&quot; sections have default values which apply the vast majority of the time (e.g. &quot;metric_type&quot; is almost always &quot;gauge&quot;). Removing these:</p>
+<pre><code class="hljs css language-json">{
+  <span class="hljs-attr">"metrics_groups"</span>: [
+    {
+      <span class="hljs-attr">"dimensions"</span>: {
+        <span class="hljs-attr">"sensor"</span>: {
+          <span class="hljs-attr">"value"</span>: <span class="hljs-string">"temp_sensor_name.$index"</span>
+        }
+      },
+      <span class="hljs-attr">"group_name"</span>: <span class="hljs-string">"environment"</span>,
+      <span class="hljs-attr">"metrics"</span>: {
+        <span class="hljs-attr">"temperature_fahrenheit"</span>: {
+          <span class="hljs-attr">"indices_from"</span>: <span class="hljs-string">"temp_sensor_scales"</span>,
+          <span class="hljs-attr">"transform"</span>: <span class="hljs-string">"lambda x: round((x * 1.8) + 32, 2)"</span>,
+          <span class="hljs-attr">"type"</span>: <span class="hljs-string">"float"</span>,
+          <span class="hljs-attr">"value"</span>: <span class="hljs-string">"int(ent_sensor_values.$index) * temp_sensor_scales.$index"</span>
+        }
+      }
+    },
+    {
+      <span class="hljs-attr">"dimensions"</span>: {},
+      <span class="hljs-attr">"group_name"</span>: <span class="hljs-string">"environment"</span>,
+      <span class="hljs-attr">"metrics"</span>: {
+        <span class="hljs-attr">"fans_ok"</span>: {
+          <span class="hljs-attr">"value"</span>: <span class="hljs-string">"len([x for x in cefc_fru_fan.values() if x == '2'])"</span>
+        },
+        <span class="hljs-attr">"fans_total"</span>: {
+          <span class="hljs-attr">"value"</span>: <span class="hljs-number">1</span>
+        }
+      }
+    },
+    {
+      <span class="hljs-attr">"dimensions"</span>: {},
+      <span class="hljs-attr">"group_name"</span>: <span class="hljs-string">"environment"</span>,
+      <span class="hljs-attr">"metrics"</span>: {
+        <span class="hljs-attr">"power_units_on"</span>: {
+          <span class="hljs-attr">"value"</span>: <span class="hljs-string">"len([(x,y) for (x,y) in entity_fru_control.items() if x in power_supplies and y in ['2', '9', '12']])"</span>
+        },
+        <span class="hljs-attr">"power_units_total"</span>: {
+          <span class="hljs-attr">"value"</span>: <span class="hljs-number">2</span>
+        }
+      }
+    },
+    {
+      <span class="hljs-attr">"dimensions"</span>: {
+        <span class="hljs-attr">"cpu_name"</span>: {
+          <span class="hljs-attr">"value"</span>: <span class="hljs-string">"cpu_name.$index"</span>
+        },
+        <span class="hljs-attr">"cpu_no"</span>: {
+          <span class="hljs-attr">"value"</span>: <span class="hljs-string">"cpu_no.$index"</span>
+        },
+        <span class="hljs-attr">"cpu_type"</span>: {
+          <span class="hljs-attr">"value"</span>: <span class="hljs-string">"'ctrl'"</span>
+        }
+      },
+      <span class="hljs-attr">"group_name"</span>: <span class="hljs-string">"cpu"</span>,
+      <span class="hljs-attr">"metrics"</span>: {
+        <span class="hljs-attr">"cpu_utilization"</span>: {
+          <span class="hljs-attr">"value"</span>: <span class="hljs-string">"cpu_util.$index"</span>
+        }
+      }
+    },
+    {
+      <span class="hljs-attr">"dimensions"</span>: {
+        <span class="hljs-attr">"memory_type"</span>: {
+          <span class="hljs-attr">"value"</span>: <span class="hljs-string">"memory_type.$index"</span>
+        }
+      },
+      <span class="hljs-attr">"group_name"</span>: <span class="hljs-string">"memory"</span>,
+      <span class="hljs-attr">"metrics"</span>: {
+        <span class="hljs-attr">"memory_total"</span>: {
+          <span class="hljs-attr">"value"</span>: <span class="hljs-string">"memory_total.$index"</span>
+        },
+        <span class="hljs-attr">"memory_used"</span>: {
+          <span class="hljs-attr">"value"</span>: <span class="hljs-string">"memory_used.$index"</span>
+        }
+      }
+    }
+  ]
+}
+</code></pre>
+<p>We can reduce the length of the enrichment definition even more by taking note of the many entries which now contain only a &quot;value&quot; key-value pair. For example:</p>
+<pre><code class="hljs css language-json">{
+  <span class="hljs-attr">"memory_used"</span>: {
+    <span class="hljs-attr">"value"</span>: <span class="hljs-string">"memory_used.$index"</span>
+  }
+}
+</code></pre>
+<p>If &quot;value&quot; is the only key present, we can use the following shorthand which maps the <em>metric_name</em> or <em>dimension_name</em> directly to the value of &quot;value&quot;. Here:</p>
+<pre><code class="hljs css language-json">{
+  <span class="hljs-attr">"memory_used"</span>: <span class="hljs-string">"memory_used.$index"</span>
+}
+</code></pre>
+<p>Much cleaner.</p>
+<p>Applied to the full example, we have:</p>
+<pre><code class="hljs css language-json">{
+  <span class="hljs-attr">"metrics_groups"</span>: [
+    {
+      <span class="hljs-attr">"dimensions"</span>: {
+        <span class="hljs-attr">"sensor"</span>: <span class="hljs-string">"temp_sensor_name.$index"</span>
+      },
+      <span class="hljs-attr">"group_name"</span>: <span class="hljs-string">"environment"</span>,
+      <span class="hljs-attr">"metrics"</span>: {
+        <span class="hljs-attr">"temperature_fahrenheit"</span>: {
+          <span class="hljs-attr">"indices_from"</span>: <span class="hljs-string">"temp_sensor_scales"</span>,
+          <span class="hljs-attr">"transform"</span>: <span class="hljs-string">"lambda x: round((x * 1.8) + 32, 2)"</span>,
+          <span class="hljs-attr">"type"</span>: <span class="hljs-string">"float"</span>,
+          <span class="hljs-attr">"value"</span>: <span class="hljs-string">"int(ent_sensor_values.$index) * temp_sensor_scales.$index"</span>
+        }
+      }
+    },
+    {
+      <span class="hljs-attr">"dimensions"</span>: {},
+      <span class="hljs-attr">"group_name"</span>: <span class="hljs-string">"environment"</span>,
+      <span class="hljs-attr">"metrics"</span>: {
+        <span class="hljs-attr">"fans_ok"</span>: <span class="hljs-string">"len([x for x in cefc_fru_fan.values() if x == '2'])"</span>,
+        <span class="hljs-attr">"fans_total"</span>: <span class="hljs-number">1</span>
+      }
+    },
+    {
+      <span class="hljs-attr">"dimensions"</span>: {},
+      <span class="hljs-attr">"group_name"</span>: <span class="hljs-string">"environment"</span>,
+      <span class="hljs-attr">"metrics"</span>: {
+        <span class="hljs-attr">"power_units_on"</span>: <span class="hljs-string">"len([(x,y) for (x,y) in entity_fru_control.items() if x in power_supplies and y in ['2', '9', '12']])"</span>,
+        <span class="hljs-attr">"power_units_total"</span>: <span class="hljs-number">2</span>
+      }
+    },
+    {
+      <span class="hljs-attr">"dimensions"</span>: {
+        <span class="hljs-attr">"cpu_name"</span>: <span class="hljs-string">"cpu_name.$index"</span>,
+        <span class="hljs-attr">"cpu_no"</span>: <span class="hljs-string">"cpu_no.$index"</span>,
+        <span class="hljs-attr">"cpu_type"</span>: <span class="hljs-string">"'ctrl'"</span>
+      },
+      <span class="hljs-attr">"group_name"</span>: <span class="hljs-string">"cpu"</span>,
+      <span class="hljs-attr">"metrics"</span>: {
+        <span class="hljs-attr">"cpu_utilization"</span>: <span class="hljs-string">"cpu_util.$index"</span>
+      }
+    },
+    {
+      <span class="hljs-attr">"dimensions"</span>: {
+        <span class="hljs-attr">"memory_type"</span>: <span class="hljs-string">"memory_type.$index"</span>
+      },
+      <span class="hljs-attr">"group_name"</span>: <span class="hljs-string">"memory"</span>,
+      <span class="hljs-attr">"metrics"</span>: {
+        <span class="hljs-attr">"memory_total"</span>: <span class="hljs-string">"memory_total.$index"</span>,
+        <span class="hljs-attr">"memory_used"</span>: <span class="hljs-string">"memory_used.$index"</span>
+      }
+    }
+  ]
+}
+</code></pre>
+<p>In this case, the fully-detailed version of <em>metrics_groups</em> contains 97 lines, while the condensed version has only 53 -- a 45% reduction. This goes a long way toward improving readability and accelerating plugin development when a user wants to quickly report a few metrics and dimensions for a resource.</p>
+</span></div></article></div><div class="docLastUpdate"><em>Last updated on 2019-8-8 by James Diss</em></div><div class="docs-prevnext"><a class="docs-prev button" href="/docs/panoptes-reference/plugin-overview"><span class="arrow-prev">← </span><span>Plugin Overview</span></a></div></div></div><nav class="onPageNav"><ul class="toc-headings"><li><a href="#background">Background</a></li><li><a href="#reference">Reference</a><ul class="toc-headings"><li><a href="#oids">Oids</a></li><li><a href="#metrics-groups">Metrics Groups</a></li><li><a href="#examples">Examples</a></li><li><a href="#using-the-dsl-shorthand">Using the DSL Shorthand</a></li></ul></li></ul></nav></div><footer class="nav-footer" id="footer"><section class="sitemap"><a href="/" class="nav-home"><img src="/img/panoptes_eye_white.svg" alt="Panoptes" width="100" height="100"/></a><div><h5>Docs</h5><a href="/docs/getting-started">Getting Started</a><a href="/docs/support">Get Help</a><a href="/docs/contribute">Contribute</a></div><div><h5>Community</h5><a href="/support">Get Help</a><a href="https://panoptescommunity.slack.com/">Slack</a><a href="https://yahoodevelopers.tumblr.com/" target="_blank" rel="noreferrer noopener">Blog</a></div><div><h5>More</h5><a href="https://github.com/yahoo/panoptes" target="_blank" rel="noreferrer noopener">GitHub</a><a href="https://github.com/yahoo/panoptes/issues" target="_blank" rel="noreferrer noopener">Report an Issue</a></div></section><section class="copyright">Copyright 2019 Oath Inc. Unless otherwise noted, all content on this site is provided under the <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC-BY-SA-4.0 license</a>.</section></footer></div></body></html>
