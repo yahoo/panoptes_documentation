@@ -13,7 +13,7 @@ documentation.
 * Varun Varma: vvarun@verizonmedia.com
 * Ian Holmes: iholmes@verizonmedia.com
 * James Diss: rexfury@verizonmedia.com
-* Nathan Kamm: nkamm@verizonmedia.com
+* Nathan Kamm: nathan.kamm@verizonmedia.com
 
 ## Contribute
 
