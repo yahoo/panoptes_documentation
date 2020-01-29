@@ -16,18 +16,15 @@ with [LSB](https://en.wikipedia.org/wiki/Linux_Standard_Base).
 
 The OS should also have the following packages installed:
 
- - gcc
- - gcc-c++
- - python-dev
- - openssl-devel
+ - python3
+ - python3-venv
+ - python3-pip
+ - python3-setuptools
 
 ### Python
 
-Panoptes currently supports Python 2.7 only. You can download the latest stable version of Python 2.7 from 
-[here](https://www.python.org/downloads/release/python-2716/)
-
-python-virtualenv should also be installed in order to run panoptes in a contained python environment, as per the 
-examples below.
+Panoptes supports Python3.  Our reference version for the moment is Python 3.6, and you'll need venv or another 
+virtual environment for Python3.
 
 ### Dependencies
 
@@ -61,7 +58,7 @@ Please follow these instructions to download and install [InfluxDB](https://port
 
 ## Installation
 
-Install Panoptes by running the following commands:
+Install Panoptes by running the following commands (assuming `venv`):
 
 ```bash
 sudo useradd panoptes
@@ -69,10 +66,10 @@ sudo -su panoptes
 cd ~
 mkdir -p /home/panoptes/conf
 mkdir -p /home/panoptes/log
-virtualenv -p python2.7 package
-source ~/package/bin/activate
-pip install --upgrade setuptools
-pip install yahoo_panoptes
+python3 -m venv /home/panoptes_v
+source /home/panoptes_v/bin/activate
+pip3 install wheel
+pip3 install yahoo_panoptes
 ```
 
 ## Configuration

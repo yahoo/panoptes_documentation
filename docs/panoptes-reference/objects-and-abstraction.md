@@ -5,8 +5,8 @@ sidebar_label: Objects and Abstraction
 ---
 ### Site
 
-A 'site' is a string which identifies a physical or logical collection of [resources](#resource) to monitor. At Oath, 
-we set the site to the name of datacenter in which a Panoptes instance is hosted.
+A 'site' is a string which identifies a physical or logical collection of [resources](#resource) to monitor. At 
+Oath, we set the site to the name of datacenter in which a Panoptes instance is hosted.
 
 ### Resource
 
