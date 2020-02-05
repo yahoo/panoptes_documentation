@@ -98,13 +98,19 @@ class Index extends React.Component {
       <Block id="try">
         {[
           {
-            content: 'Give it a try jammed into a tiny [Docker container](https://github.com/yahoo/panoptes_docker).  ' +
-                'We\'re breaking all the rules here. ' +
-                '```git clone git@github.com:yahoo/panoptes_docker.git \```<br/>' +
-                '`&& cd panoptes_docker && docker build . -t panoptes_docker`<br/><br/>' +
-                'Fire that bad boy up with `docker run -d --sysctl net.core.somaxconn=511 --name="panoptes_docker" --shm-size=2G -p 127.0.0.1:8080:3000/tcp panoptes_docker`<br/><br/>' +
+            content: '> Give it a try jammed into a tiny [Docker container](https://github.com/yahoo/panoptes_docker).  ' +
+                'We\'re breaking all the rules here.<br/></br>' +
+                '```git clone git@github.com:yahoo/panoptes_docker.git ' +
+                '&& cd panoptes_docker && docker build . -t panoptes_docker```<br/><br/>' +
+                'Fire that bad boy up with:<br/> '+
+                '```docker run -d --sysctl net.core.somaxconn=511 --name="panoptes_docker" --shm-size=2G ' +
+                '-p 127.0.0.1:8080:3000/tcp panoptes_docker```<br/><br/>' +
+                'Jump into the running container with:<br/> ```docker exec -it panoptes_docker bash```<br/><br/>' +
+                'Run a small script that populates the redis DB with community strings:<br/>' +
+                '```/etc/redis/populate-redis.sh```<br/><br/>' +
+                'Then fire up a browser, point at http://127.0.0.1:3000 and check your results in Grafana.<br/><br/>' +
               'Read more about this at the [Panoptes Docker](https://github.com/yahoo/panoptes_docker) repo.',
-            image: `${baseUrl}img/share-arrow.svg`,
+            image: `${baseUrl}img/docker-vertical-logo-monochromatic.png`,
             imageAlign: 'left',
             title: 'Try it Out',
           },
