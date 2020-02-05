@@ -98,6 +98,10 @@ a {
     margin: auto;
 }
 
+.blockImage {
+    margin: auto 0;
+}
+
 .projectLogo {
     display: block;
     width: 100%
@@ -159,6 +163,6 @@ a {
 
 .container .wrapper .imageAlignSide p {
     margin: 0 0 40px 0;
-    max-width: 560px;
     text-align: left !important;
+    max-width: 1000px !important;
 }
