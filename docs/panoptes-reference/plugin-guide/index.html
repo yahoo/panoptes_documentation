@@ -1,0 +1,369 @@
+<!DOCTYPE html><html lang="en"><head><meta charSet="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><title>Writing a Plugin · Panoptes</title><meta name="viewport" content="width=device-width"/><meta name="generator" content="Docusaurus"/><meta name="description" content="Writing a Panoptes Polling Plugin"/><meta name="docsearch:language" content="en"/><meta property="og:title" content="Writing a Plugin · Panoptes"/><meta property="og:type" content="website"/><meta property="og:url" content="http://getpanoptes.io/"/><meta property="og:description" content="Writing a Panoptes Polling Plugin"/><meta property="og:image" content="http://getpanoptes.io/img/ogImage.png"/><meta name="twitter:card" content="summary"/><meta name="twitter:image" content="http://getpanoptes.io/img/site_logo.png"/><link rel="shortcut icon" href="/img/favicon.png"/><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/zenburn.min.css"/><script type="text/javascript" src="https://buttons.github.io/buttons.js"></script><script src="/js/scrollSpy.js"></script><link rel="stylesheet" href="/css/main.css"/><script src="/js/codetabs.js"></script></head><body class="sideNavVisible separateOnPageNav"><div class="fixedHeaderContainer"><div class="headerWrapper wrapper"><header><a href="/"><img class="logo" src="/img/panoptes_eye_black.svg" alt="Panoptes"/><h2 class="headerTitleWithLogo">Panoptes</h2></a><div class="navigationWrapper navigationSlider"><nav class="slidingNav"><ul class="nav-site nav-site-internal"><li class="siteNavGroupActive"><a href="/docs/getting-started" target="_self">Docs</a></li><li class=""><a href="/docs/concepts" target="_self">Concepts</a></li><li class=""><a href="/docs/support" target="_self">Get Help</a></li><li class=""><a href="/docs/contribute" target="_self">Contributing</a></li></ul></nav></div></header></div></div><div class="navPusher"><div class="docMainWrapper wrapper"><div class="docsNavContainer" id="docsNav"><nav class="toc"><div class="toggleNav"><section class="navWrapper wrapper"><div class="navBreadcrumb wrapper"><div class="navToggle" id="navToggler"><div class="hamburger-menu"><div class="line1"></div><div class="line2"></div><div class="line3"></div></div></div><h2><i>›</i><span>Plugins</span></h2><div class="tocToggler" id="tocToggler"><i class="icon-toc"></i></div></div><div class="navGroups"><div class="navGroup"><h3 class="navGroupCategoryTitle">General Information</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/getting-started">Getting Started</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">User Guide</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/user-guide/installation">Installation</a></li><li class="navListItem"><a class="navItem" href="/docs/user-guide/usage">Usage</a></li><li class="navListItem"><a class="navItem" href="/docs/user-guide/configuration">Configure</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Panoptes Reference Docs</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/panoptes-reference/objects-and-abstraction">Objects and Abstraction</a></li><li class="navListItem"><a class="navItem" href="/docs/panoptes-reference/subsystems">Subsystems</a></li><li class="navListItem"><a class="navItem" href="/docs/panoptes-reference/system-metrics">System metrics conventions</a></li><div class="navGroup subNavGroup"><h4 class="navGroupSubcategoryTitle">Plugins</h4><ul><li class="navListItem"><a class="navItem" href="/docs/panoptes-reference/plugin-overview">Plugin Overview</a></li><li class="navListItem"><a class="navItem" href="/docs/panoptes-reference/generic-snmp-polling-dsl">Generic SNMP Polling Plugin DSL</a></li><li class="navListItem navListItemActive"><a class="navItem" href="/docs/panoptes-reference/plugin-guide">Writing A Plugin</a></li><li class="navListItem"><a class="navItem" href="/docs/panoptes-reference/starter-napalm-plugin">Starter Napalm Plugin</a></li></ul></div></ul></div></div></section></div><script>
+            var coll = document.getElementsByClassName('collapsible');
+            var checkActiveCategory = true;
+            for (var i = 0; i < coll.length; i++) {
+              var links = coll[i].nextElementSibling.getElementsByTagName('*');
+              if (checkActiveCategory){
+                for (var j = 0; j < links.length; j++) {
+                  if (links[j].classList.contains('navListItemActive')){
+                    coll[i].nextElementSibling.classList.toggle('hide');
+                    coll[i].childNodes[1].classList.toggle('rotate');
+                    checkActiveCategory = false;
+                    break;
+                  }
+                }
+              }
+
+              coll[i].addEventListener('click', function() {
+                var arrow = this.childNodes[1];
+                arrow.classList.toggle('rotate');
+                var content = this.nextElementSibling;
+                content.classList.toggle('hide');
+              });
+            }
+
+            document.addEventListener('DOMContentLoaded', function() {
+              createToggler('#navToggler', '#docsNav', 'docsSliderActive');
+              createToggler('#tocToggler', 'body', 'tocActive');
+
+              var headings = document.querySelector('.toc-headings');
+              headings && headings.addEventListener('click', function(event) {
+                var el = event.target;
+                while(el !== headings){
+                  if (el.tagName === 'A') {
+                    document.body.classList.remove('tocActive');
+                    break;
+                  } else{
+                    el = el.parentNode;
+                  }
+                }
+              }, false);
+
+              function createToggler(togglerSelector, targetSelector, className) {
+                var toggler = document.querySelector(togglerSelector);
+                var target = document.querySelector(targetSelector);
+
+                if (!toggler) {
+                  return;
+                }
+
+                toggler.onclick = function(event) {
+                  event.preventDefault();
+
+                  target.classList.toggle(className);
+                };
+              }
+            });
+        </script></nav></div><div class="container mainContainer docsContainer"><div class="wrapper"><div class="post"><header class="postHeader"><h1 id="__docusaurus" class="postHeaderTitle">Writing a Plugin</h1></header><article><div><span><p>Writing a Panoptes Polling Plugin</p>
+<p><strong>NOTE</strong> This tutorial is written assuming the reader has already read the <code>plugin-overview</code> docs <a href="https://getpanoptes.io/docs/panoptes-reference/plugin-overview">here</a> and has the <a href="https://github.com/yahoo/panoptes_docker">docker</a> running.</p>
+<ol>
+<li>Start With The Provided Plugin Skeleton</li>
+</ol>
+<pre><code class="hljs css language-python"><span class="hljs-keyword">from</span> typing <span class="hljs-keyword">import</span> Dict, Any
+<span class="hljs-keyword">import</span> time
+<span class="hljs-keyword">from</span> yahoo_panoptes.polling.polling_plugin <span class="hljs-keyword">import</span> PanoptesPollingPlugin
+<span class="hljs-keyword">from</span> yahoo_panoptes.framework.metrics <span class="hljs-keyword">import</span> PanoptesMetricsGroupSet, PanoptesMetricsGroup, \
+    PanoptesMetric, PanoptesMetricType, PanoptesMetricDimension
+<span class="hljs-keyword">from</span> yahoo_panoptes.framework.plugins.context <span class="hljs-keyword">import</span> PanoptesPluginContext
+<span class="hljs-keyword">from</span> yahoo_panoptes.framework.resources <span class="hljs-keyword">import</span> PanoptesResource
+
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">TutorialPollingPlugin</span><span class="hljs-params">(PanoptesPollingPlugin)</span>:</span>
+    <span class="hljs-string">"""
+    Only classes that inherit from PanoptesPollingPlugin are loaded. (Upstream Configuration Knobs Control This)
+    """</span>
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">__init__</span><span class="hljs-params">(self)</span>:</span>
+        self._plugin_context: PanoptesPluginContext = <span class="hljs-literal">None</span>
+        self._config: Dict[str, Any] = {}
+        self._panoptes_metrics_group_set: PanoptesMetricsGroupSet = PanoptesMetricsGroupSet()
+        self._device: PanoptesResource = <span class="hljs-literal">None</span>
+        self._execute_frequency: int = <span class="hljs-number">60</span>
+        self._logger = <span class="hljs-literal">None</span>
+        super(TutorialPollingPlugin, self).__init__()
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">populateMetricsGroupSetWithTimeSeries</span><span class="hljs-params">(self)</span> -&gt; <span class="hljs-keyword">None</span>:</span>
+        <span class="hljs-string">"""
+        PanoptesMetricsGroupSet&lt;set&gt;{
+            PanoptesMetricsGroup&lt;dict&gt;{
+                dimensions&lt;set&gt;: {
+                    PanoptesMetricDimension(name: str, value: str),
+                    PanoptesMetricDimension(name: str, value: str),
+                    ....
+                },
+                metrics&lt;set&gt;: {
+                    PanoptesMetric(metric_name: str, metric_value: number, metric_type: {1: 'COUNTER', 0: 'GAUGE'}),
+                    PanoptesMetric(metric_name: str, metric_value: number, metric_type: {1: 'COUNTER', 0: 'GAUGE'}),
+                }
+            },
+            PanoptesMetricsGroup&lt;dict&gt;{...},
+            PanoptesMetricsGroup&lt;dict&gt;{...}
+        }
+
+        Signatures:
+            PanoptesMetricsGroup(resource: PanoptesResource, group_type: str, interval: int)
+                - Timeseries container which is able to hold any number of metrics &amp; dimensions.
+
+            PanoptesMetricDimension(name: string_types, value: string_types)
+            PanoptesMetric(metric_name: string_types, metric_value: number, metric_type: {1: 'COUNTER', 0: 'GAUGE'})
+                - Note: Panoptes performs rate conversions specified in the .panoptes-plugin file
+
+        The text above shows the structure of how time series data is stored within the PanoptesMetricsGroupSet.
+        """</span>
+        <span class="hljs-keyword">pass</span>
+
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">run</span><span class="hljs-params">(self, context: PanoptesPluginContext)</span> -&gt; PanoptesMetricsGroupSet:</span>
+        <span class="hljs-string">"""
+        This function is called by the runner.py::class PanoptesPluginRunner::execute_plugin()::177
+        The PluginRunner creates an instance of the PanoptesPluginManager which recursively searches the directory tree
+        and collects all .panoptes-plugin files, loading them into the PanoptesPluginInfo class. The PanoptesPluginInfo
+        class contains all metadata associated with a plugin: last execution time, device to run the plugin against
+        (if applicable), last results time, key value store, the zookeeper lock, along with a link to the plugin itself.
+        The PluginManager uses these provided functions to verify that the plugin should be run. Once verifications
+        are complete, a lock is acquired and this function called. The PanoptesMetricsGroupSet (timeseries container)
+        object returned is passed to the callback function `_process_metrics_group_set`. The callback function emits
+        the provided metrics groups set on to the message bus (Kafka).
+        Returns:
+            PanoptesMetricsGroupSet: Timeseries Container
+
+            JSON from the PanoptesMetricsGroupSet created in the `populatedMetricsGroupSetWithTimeSeries` function.
+        """</span>
+        self._plugin_context = context
+        self._config = context.config
+        self._logger = context.logger
+        self._device = context.data
+        self._execute_frequency = int(context.config[<span class="hljs-string">'main'</span>][<span class="hljs-string">'execute_frequency'</span>])
+
+        self._logger.info(<span class="hljs-string">"Running {} against {}"</span>.format(type(self).__name__, self._device))
+
+        start_time = time.time()
+        self.populateMetricsGroupSetWithTimeSeries()
+        end_time = time.time()
+
+        self._logger.info(
+            <span class="hljs-string">"{} ran against device {} in {:.2f} seconds, {} metrics produced"</span>.format(
+                type(self).__name__, self._device, end_time - start_time, len(self._panoptes_metrics_group_set))
+        )
+
+        <span class="hljs-keyword">return</span> self._panoptes_metrics_group_set
+        
+</code></pre>
+<p>To run this plugin inside of the docker container. Please follow the steps outlined below.</p>
+<ol>
+<li><p>Add a <code>resource</code> for the plugin to run against.</p>
+<ul>
+<li><code>nano /home/panoptes/conf/localhost.json</code> and add the additional device shown below.</li>
+</ul></li>
+</ol>
+<pre><code class="hljs">{
+    &quot;resource_plugin&quot;: &quot;plugin_discovery_from_json_file&quot;,
+    &quot;resource_site&quot;: &quot;local&quot;,
+    &quot;resource_class&quot;: &quot;system&quot;,
+    &quot;resource_subclass&quot;: &quot;host&quot;,
+    &quot;resource_type&quot;: &quot;generic&quot;,
+    &quot;resource_id&quot;: &quot;tutorial_device&quot;,
+    &quot;resource_endpoint&quot;: &quot;localhost&quot;,
+    &quot;resource_creation_timestamp&quot;: &quot;1512629517.03121&quot;,
+    &quot;resource_metadata&quot;: {
+        &quot;_resource_ttl&quot;: &quot;900&quot;
+    }
+}
+</code></pre>
+<p>(ctrl-x to exit)</p>
+<p>When finished the file should look like this.</p>
+<pre><code class="hljs">root@dbe423716f34:/home/panoptes/conf# cat localhost.json 
+[
+    {
+        &quot;resource_plugin&quot;: &quot;plugin_discovery_from_json_file&quot;,
+        &quot;resource_site&quot;: &quot;local&quot;,
+        &quot;resource_class&quot;: &quot;system&quot;,
+        &quot;resource_subclass&quot;: &quot;host&quot;,
+        &quot;resource_type&quot;: &quot;generic&quot;,
+        &quot;resource_id&quot;: &quot;localhost&quot;,
+        &quot;resource_endpoint&quot;: &quot;localhost&quot;,
+        &quot;resource_creation_timestamp&quot;: &quot;1512629517.03121&quot;,
+        &quot;resource_metadata&quot;: {
+        &quot;_resource_ttl&quot;: &quot;900&quot;
+        }
+    },
+    {
+        &quot;resource_plugin&quot;: &quot;plugin_discovery_from_json_file&quot;,
+        &quot;resource_site&quot;: &quot;local&quot;,
+        &quot;resource_class&quot;: &quot;tutorial&quot;,
+        &quot;resource_subclass&quot;: &quot;host&quot;,
+        &quot;resource_type&quot;: &quot;generic&quot;,
+        &quot;resource_id&quot;: &quot;tutorial_device&quot;,
+        &quot;resource_endpoint&quot;: &quot;localhost&quot;,
+        &quot;resource_creation_timestamp&quot;: &quot;1512629517.03121&quot;,
+        &quot;resource_metadata&quot;: {
+        &quot;_resource_ttl&quot;: &quot;900&quot;
+        }
+    }
+]
+</code></pre>
+<p>The next time the discovery plugin runs (60 second interval) this resource will be discovered and added to the internal device store with a 7 day TTL.</p>
+<p>To verify it this is the case you do either of the following.</p>
+<p>i) Check redis with <code>echo &quot;keys *panoptes:resource_manager_kv*&quot; | /usr/bin/redis-cli</code> look for the <code>id|tutorial_device</code></p>
+<pre><code class="hljs">    root@dbe423716f34:/home/panoptes# echo &quot;keys *panoptes:resource_manager_kv*&quot; | /usr/bin/redis-cli
+    &quot;panoptes:resource_manager_kv:resource:plugin|plugin_discovery_from_json_file|site|local|class|tutorial|subclass|host|type|generic|id|tutorial_device|endpoint|localhost&quot;
+    &quot;panoptes:resource_manager_kv:resource:plugin|plugin_discovery_from_json_file|site|local|class|system|subclass|host|type|generic|id|localhost|endpoint|localhost&quot;
+</code></pre>
+<p>ii) Tail the discovery plugin agent logs and look that the logged number of devices discovered increased (2 members).</p>
+<pre><code class="hljs">    tail -f discovery_plugin_agent.log
+    [INFO] [runner] [info():76] [PID:629 TID:140015174395712] [From JSON File Discovery Plugin] Plugin returned a result set with 2 members
+</code></pre>
+<ol start="2">
+<li><p>Make a directory to place the plugin.py and the .panoptes-plugin file for yapsy to load.</p>
+<ul>
+<li><code>mkdir -p /home/panoptes_v/lib/python3.6/site-packages/yahoo_panoptes/plugins/polling/tutorial_plugin</code></li>
+</ul></li>
+<li><p>Create test_polling_plugin file and copy the TutorialPollingPlugin class along with all python imports into it</p>
+<ul>
+<li><code>nano /home/panoptes_v/lib/python3.6/site-packages/yahoo_panoptes/plugins/polling/tutorial_plugin/tutorial_polling_plugin.py</code></li>
+</ul></li>
+<li><p>Add the .panoptes-plugin file.</p>
+<ul>
+<li><code>nano /home/panoptes_v/lib/python3.6/site-packages/yahoo_panoptes/plugins/polling/tutorial_plugin/tutorial_polling_plugin.panoptes-plugin</code></li>
+</ul>
+<pre><code class="hljs css language-sh">[Core]
+Name = Tutorial Plugin
+Module = /home/panoptes_v/lib/python3.6/site-packages/yahoo_panoptes/plugins/polling/tutorial_plugin/tutorial_polling_plugin.py
+
+[Documentation]
+Author = &lt;Your Name&gt;
+Version = 0.1
+Website = github.com/&lt;you&gt;
+Description = This is a tutorial plugin
+
+[main]
+execute_frequency = 60
+resource_filter = resource_id = <span class="hljs-string">"tutorial_device"</span>
+namespace = metrics
+</code></pre></li>
+<li><p>The plugin shown will run, however will only produce an empty set <code>{}</code>. This is because no time series data is ever added to the PanoptesMetricsGroupSet.
+Extend the functionality of the plugin by implementing the populatedMetricsGroupSetWithTimeSeries() function.</p></li>
+</ol>
+<pre><code class="hljs css language-python3">def populated<span class="hljs-constructor">MetricsGroupSetWithTimeSeries(<span class="hljs-params">self</span>)</span> -&gt; None:
+    panoptes_metrics_group = <span class="hljs-constructor">PanoptesMetricsGroup(<span class="hljs-params">self</span>.<span class="hljs-params">_device</span>, '<span class="hljs-params">example</span>', <span class="hljs-params">self</span>.<span class="hljs-params">_execute_frequency</span>)</span>
+    self.<span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">_panoptes_metrics_group_set</span>.</span></span>add(panoptes_metrics_group)
+</code></pre>
+<p>Those two additional lines will cause the plugin to produce the output shown below.</p>
+<pre><code class="hljs css language-json">{
+    <span class="hljs-attr">"metrics_group_type"</span>: <span class="hljs-string">"example"</span>,
+    <span class="hljs-attr">"metrics_group_interval"</span>: <span class="hljs-number">60</span>,
+    <span class="hljs-attr">"metrics_group_creation_timestamp"</span>: <span class="hljs-number">1580339222.678</span>,
+    <span class="hljs-attr">"metrics_group_schema_version"</span>: <span class="hljs-string">"0.2"</span>,
+    <span class="hljs-attr">"resource"</span>: {
+        <span class="hljs-attr">"resource_site"</span>: <span class="hljs-string">"test_site"</span>,
+        <span class="hljs-attr">"resource_class"</span>: <span class="hljs-string">"test_class"</span>,
+        <span class="hljs-attr">"resource_subclass"</span>: <span class="hljs-string">"test_subclass"</span>,
+        <span class="hljs-attr">"resource_type"</span>: <span class="hljs-string">"test_type"</span>,
+        <span class="hljs-attr">"resource_id"</span>: <span class="hljs-string">"tutorial_device"</span>,
+        <span class="hljs-attr">"resource_endpoint"</span>: <span class="hljs-string">"test_endpoint"</span>,
+        <span class="hljs-attr">"resource_metadata"</span>: {
+            <span class="hljs-attr">"_resource_ttl"</span>: <span class="hljs-string">"604800"</span>
+        },
+        <span class="hljs-attr">"resource_creation_timestamp"</span>: <span class="hljs-number">1580339222.6764865</span>,
+        <span class="hljs-attr">"resource_plugin"</span>: <span class="hljs-string">"test_plugin"</span>
+    },
+    <span class="hljs-attr">"metrics"</span>: [],
+    <span class="hljs-attr">"dimensions"</span>: []
+}
+</code></pre>
+<p>This is a great start, but there still isn't any meaningful information stored within the MetricsGroup. Extend the populateMetricsGroupSetWithTimeSeries function and add data.</p>
+<pre><code class="hljs css language-python"><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">populateMetricsGroupSetWithTimeSeries</span><span class="hljs-params">(self)</span> -&gt; <span class="hljs-keyword">None</span>:</span>
+    panoptes_metrics_group = PanoptesMetricsGroup(self._device, <span class="hljs-string">'example'</span>, self._execute_frequency)
+    dimension = PanoptesMetricDimension(<span class="hljs-string">'cpu_no'</span>, <span class="hljs-string">'5'</span>)
+    panoptes_metrics_group.add_dimension(dimension)
+
+    counter = PanoptesMetric(<span class="hljs-string">'context_switch_count'</span>, <span class="hljs-number">50</span>, PanoptesMetricType.COUNTER)
+    gauge = PanoptesMetric(<span class="hljs-string">'cpu_load'</span>, <span class="hljs-number">.3</span>, PanoptesMetricType.GAUGE)
+    panoptes_metrics_group.add_metric(counter)
+    panoptes_metrics_group.add_metric(gauge)
+
+    self._panoptes_metrics_group_set.add(panoptes_metrics_group)
+</code></pre>
+<p>The plugin now returns the time series shown below.</p>
+<pre><code class="hljs">{
+    <span class="hljs-attr">"metrics_group_type"</span>: <span class="hljs-string">"example"</span>,
+    <span class="hljs-attr">"metrics_group_interval"</span>: <span class="hljs-number">60</span>,
+    <span class="hljs-attr">"metrics_group_creation_timestamp"</span>: <span class="hljs-number">1580339222.678</span>,
+    <span class="hljs-attr">"metrics_group_schema_version"</span>: <span class="hljs-string">"0.2"</span>,
+    <span class="hljs-attr">"resource"</span>: {
+        <span class="hljs-attr">"resource_site"</span>: <span class="hljs-string">"test_site"</span>,
+        <span class="hljs-attr">"resource_class"</span>: <span class="hljs-string">"test_class"</span>,
+        <span class="hljs-attr">"resource_subclass"</span>: <span class="hljs-string">"test_subclass"</span>,
+        <span class="hljs-attr">"resource_type"</span>: <span class="hljs-string">"test_type"</span>,
+        <span class="hljs-attr">"resource_id"</span>: <span class="hljs-string">"tutorial_device"</span>,
+        <span class="hljs-attr">"resource_endpoint"</span>: <span class="hljs-string">"test_endpoint"</span>,
+        <span class="hljs-attr">"resource_metadata"</span>: {
+            <span class="hljs-attr">"_resource_ttl"</span>: <span class="hljs-string">"604800"</span>
+        },
+        <span class="hljs-attr">"resource_creation_timestamp"</span>: <span class="hljs-number">1580339222.6764865</span>,
+        <span class="hljs-attr">"resource_plugin"</span>: <span class="hljs-string">"test_plugin"</span>
+    },
+    <span class="hljs-attr">"metrics"</span>: [
+        {
+            <span class="hljs-attr">"metric_creation_timestamp"</span>: <span class="hljs-number">1580339222.681</span>,
+            <span class="hljs-attr">"metric_name"</span>: <span class="hljs-string">"cpu_load"</span>,
+            <span class="hljs-attr">"metric_value"</span>: <span class="hljs-number">0.3</span>,
+            <span class="hljs-attr">"metric_type"</span>: <span class="hljs-string">"gauge"</span>
+        },
+        {
+            <span class="hljs-attr">"metric_creation_timestamp"</span>: <span class="hljs-number">1580339222.68</span>,
+            <span class="hljs-attr">"metric_name"</span>: <span class="hljs-string">"context_switch_count"</span>,
+            <span class="hljs-attr">"metric_value"</span>: <span class="hljs-number">50</span>,
+            <span class="hljs-attr">"metric_type"</span>: <span class="hljs-string">"counter"</span>
+        }
+    ],
+    <span class="hljs-attr">"dimensions"</span>: [
+        {
+            <span class="hljs-attr">"dimension_name"</span>: <span class="hljs-string">"cpu_no"</span>,
+            <span class="hljs-attr">"dimension_value"</span>: <span class="hljs-string">"5"</span>
+        }
+    ]
+}
+</code></pre>
+<p>The plugin's callback function will place the output shown above on the message queue. This will be consumed by the downstream InfluxDB consumer.
+The data is immediately graphable on Grafana.</p>
+<p><img src="https://user-images.githubusercontent.com/29840907/73494691-e4c87600-43ac-11ea-8adb-4316ba63aeab.png" alt="Grafana Image"></p>
+<p>NOTE: Panoptes has built in support for counter / rate transformations. In order to tell the plugin runner to perform the transformations, add a [transforms] key to the .panoptes-plugins and under it, add the metric names in the following format: <code>&lt;metric_group_type&gt; = rate:&lt;COUNTERNAMES&gt;</code>. For the example above, it would be <code>example = rate:context_switch_count</code>.</p>
+<pre><code class="hljs css language-sh">[Core]
+Name = Tutorial Plugin
+Module = /home/panoptes_v/lib/python3.6/site-packages/yahoo_panoptes/plugins/polling/tutorial_plugin/tutorial_polling_plugin.py
+
+[Documentation]
+Author = &lt;Your Name&gt;
+Version = 0.1
+Website = github.com/&lt;you&gt;
+Description = This is a tutorial plugin
+
+[main]
+execute_frequency = 60
+resource_filter = resource_id = <span class="hljs-string">"tutorial_device"</span>
+namespace = metrics
+
+[transforms]
+example = rate:context_switch_count
+
+</code></pre>
+<p>Plugins can do anything a python function and class can do. While Panoptes was built for the purpose of network monitoring, its applicable scope isn't limited there.</p>
+<p>If you would like to extend your plugin to make an API call you can add the skeleton code below inside the plugin.</p>
+<pre><code class="hljs css language-python"><span class="hljs-keyword">import</span> requests
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">makeAPICall</span><span class="hljs-params">(self)</span> -&gt; Any:</span>
+        <span class="hljs-keyword">try</span>:
+            response = requests.get(<span class="hljs-string">'API Endpoint'</span>)
+            response.raise_for_status()
+        <span class="hljs-keyword">except</span> (HTTPError, Timeout, ConnectionError):
+            <span class="hljs-keyword">return</span> <span class="hljs-number">10000</span>
+
+        <span class="hljs-keyword">return</span> response.&lt;data&gt;
+        
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">populateMetricsGroupSetWithTimeSeries</span><span class="hljs-params">(self)</span> -&gt; <span class="hljs-keyword">None</span>:</span>
+        api_call_metrics_group = PanoptesMetricsGroup(self._device, <span class="hljs-string">'panoptes_api_test'</span>, self._execute_frequency)
+        bitcoin_price_metrics_group.add_dimension(PanoptesMetricDimension(<span class="hljs-string">'call'</span>, <span class="hljs-string">'first'</span>))  <span class="hljs-comment"># (self, name, value)</span>
+        bitcoin_price_metrics_group.add_metric(PanoptesMetric(<span class="hljs-string">'api_data'</span>, self.makeAPICall(),
+                                                              PanoptesMetricType.GAUGE))
+        self._panoptes_metrics_group_set.add(api_call_metrics_group)
+</code></pre>
+</span></div></article></div><div class="docLastUpdate"><em>Last updated on 2020-1-31 by Nathan Kamm</em></div><div class="docs-prevnext"><a class="docs-prev button" href="/docs/panoptes-reference/generic-snmp-polling-dsl"><span class="arrow-prev">← </span><span>Generic SNMP Polling Plugin DSL</span></a><a class="docs-next button" href="/docs/panoptes-reference/starter-napalm-plugin"><span>Starter Napalm Plugin</span><span class="arrow-next"> →</span></a></div></div></div><nav class="onPageNav"></nav></div><footer class="nav-footer" id="footer"><section class="sitemap"><a href="/" class="nav-home"><img src="/img/panoptes_eye_white.svg" alt="Panoptes" width="100" height="100"/></a><div><h5>Docs</h5><a href="/docs/getting-started">Getting Started</a><a href="/docs/support">Get Help</a><a href="/docs/contribute">Contribute</a></div><div><h5>Community</h5><a href="/support">Get Help</a><a href="https://panoptescommunity.slack.com/">Slack</a><a href="https://yahoodevelopers.tumblr.com/" target="_blank" rel="noreferrer noopener">Blog</a></div><div><h5>More</h5><a href="https://github.com/yahoo/panoptes" target="_blank" rel="noreferrer noopener">GitHub</a><a href="https://github.com/yahoo/panoptes/issues" target="_blank" rel="noreferrer noopener">Report an Issue</a></div></section><section class="copyright">Copyright 2020 Oath Inc. Unless otherwise noted, all content on this site is provided under the <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC-BY-SA-4.0 license</a>.</section></footer></div></body></html>
