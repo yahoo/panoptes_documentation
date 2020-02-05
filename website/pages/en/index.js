@@ -100,7 +100,7 @@ class Index extends React.Component {
           {
             content: '> Give it a try jammed into a tiny [Docker container](https://github.com/yahoo/panoptes_docker).  ' +
                 'We\'re breaking all the rules here.<br/></br>' +
-                '```git clone git@github.com:yahoo/panoptes_docker.git ' +
+                '```git clone https://github.com/yahoo/panoptes_docker.git ' +
                 '&& cd panoptes_docker && docker build . -t panoptes_docker```<br/><br/>' +
                 'Fire that bad boy up with:<br/> '+
                 '```docker run -d --sysctl net.core.somaxconn=511 --name="panoptes_docker" --shm-size=2G ' +
