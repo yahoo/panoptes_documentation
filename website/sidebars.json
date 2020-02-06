@@ -11,7 +11,8 @@
           "panoptes-reference/plugin-overview",
           "panoptes-reference/generic-snmp-polling-dsl",
           "panoptes-reference/plugin-guide",
-          "panoptes-reference/starter-napalm-plugin"
+          "panoptes-reference/starter-napalm-plugin",
+          "panoptes-reference/starter-snmp-plugin"
         ]}
     ]
   }
