@@ -130,7 +130,7 @@ class SandboxSNMPPollingPlugin:
                                                          port=161,
                                                          timeout=20,
                                                          retries=2,
-                                                         community='public')
+                                                         community='<fill me in>')
 
         self.buildInterfaceTable()
         self.populatedMetricsGroupSetWithTimeSeries()
@@ -262,7 +262,7 @@ class SandboxSNMPPollingPlugin(PanoptesPollingPlugin): #1 Inherit
                                                          port=161,
                                                          timeout=20,
                                                          retries=2,
-                                                         community='public')
+                                                         community='<fill me in>')
         self._logger.info("Running {} against {}".format(type(self).__name__, self._device))
 
         start_time = time.time()
