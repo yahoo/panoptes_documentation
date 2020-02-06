@@ -1,0 +1,410 @@
+<!DOCTYPE html><html lang="en"><head><meta charSet="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><title>Starter SNMP Plugin · Panoptes</title><meta name="viewport" content="width=device-width"/><meta name="generator" content="Docusaurus"/><meta name="description" content="### Writing your first SNMP Polling Plugin."/><meta name="docsearch:language" content="en"/><meta property="og:title" content="Starter SNMP Plugin · Panoptes"/><meta property="og:type" content="website"/><meta property="og:url" content="http://getpanoptes.io/"/><meta property="og:description" content="### Writing your first SNMP Polling Plugin."/><meta property="og:image" content="http://getpanoptes.io/img/ogImage.png"/><meta name="twitter:card" content="summary"/><meta name="twitter:image" content="http://getpanoptes.io/img/site_logo.png"/><link rel="shortcut icon" href="/img/favicon.png"/><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/zenburn.min.css"/><script type="text/javascript" src="https://buttons.github.io/buttons.js"></script><script src="/js/scrollSpy.js"></script><link rel="stylesheet" href="/css/main.css"/><script src="/js/codetabs.js"></script></head><body class="sideNavVisible separateOnPageNav"><div class="fixedHeaderContainer"><div class="headerWrapper wrapper"><header><a href="/"><img class="logo" src="/img/panoptes_eye_black.svg" alt="Panoptes"/><h2 class="headerTitleWithLogo">Panoptes</h2></a><div class="navigationWrapper navigationSlider"><nav class="slidingNav"><ul class="nav-site nav-site-internal"><li class="siteNavGroupActive"><a href="/docs/getting-started" target="_self">Docs</a></li><li class=""><a href="/docs/concepts" target="_self">Concepts</a></li><li class=""><a href="/docs/support" target="_self">Get Help</a></li><li class=""><a href="/docs/contribute" target="_self">Contributing</a></li></ul></nav></div></header></div></div><div class="navPusher"><div class="docMainWrapper wrapper"><div class="docsNavContainer" id="docsNav"><nav class="toc"><div class="toggleNav"><section class="navWrapper wrapper"><div class="navBreadcrumb wrapper"><div class="navToggle" id="navToggler"><div class="hamburger-menu"><div class="line1"></div><div class="line2"></div><div class="line3"></div></div></div><h2><i>›</i><span>Plugins</span></h2><div class="tocToggler" id="tocToggler"><i class="icon-toc"></i></div></div><div class="navGroups"><div class="navGroup"><h3 class="navGroupCategoryTitle">General Information</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/getting-started">Getting Started</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">User Guide</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/user-guide/installation">Installation</a></li><li class="navListItem"><a class="navItem" href="/docs/user-guide/usage">Usage</a></li><li class="navListItem"><a class="navItem" href="/docs/user-guide/configuration">Configure</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Panoptes Reference Docs</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/panoptes-reference/objects-and-abstraction">Objects and Abstraction</a></li><li class="navListItem"><a class="navItem" href="/docs/panoptes-reference/subsystems">Subsystems</a></li><li class="navListItem"><a class="navItem" href="/docs/panoptes-reference/system-metrics">System metrics conventions</a></li><div class="navGroup subNavGroup"><h4 class="navGroupSubcategoryTitle">Plugins</h4><ul><li class="navListItem"><a class="navItem" href="/docs/panoptes-reference/plugin-overview">Plugin Overview</a></li><li class="navListItem"><a class="navItem" href="/docs/panoptes-reference/generic-snmp-polling-dsl">Generic SNMP Polling Plugin DSL</a></li><li class="navListItem"><a class="navItem" href="/docs/panoptes-reference/plugin-guide">Writing A Plugin</a></li><li class="navListItem"><a class="navItem" href="/docs/panoptes-reference/starter-napalm-plugin">Starter Napalm Plugin</a></li><li class="navListItem navListItemActive"><a class="navItem" href="/docs/panoptes-reference/starter-snmp-plugin">Starter SNMP Plugin</a></li></ul></div></ul></div></div></section></div><script>
+            var coll = document.getElementsByClassName('collapsible');
+            var checkActiveCategory = true;
+            for (var i = 0; i < coll.length; i++) {
+              var links = coll[i].nextElementSibling.getElementsByTagName('*');
+              if (checkActiveCategory){
+                for (var j = 0; j < links.length; j++) {
+                  if (links[j].classList.contains('navListItemActive')){
+                    coll[i].nextElementSibling.classList.toggle('hide');
+                    coll[i].childNodes[1].classList.toggle('rotate');
+                    checkActiveCategory = false;
+                    break;
+                  }
+                }
+              }
+
+              coll[i].addEventListener('click', function() {
+                var arrow = this.childNodes[1];
+                arrow.classList.toggle('rotate');
+                var content = this.nextElementSibling;
+                content.classList.toggle('hide');
+              });
+            }
+
+            document.addEventListener('DOMContentLoaded', function() {
+              createToggler('#navToggler', '#docsNav', 'docsSliderActive');
+              createToggler('#tocToggler', 'body', 'tocActive');
+
+              var headings = document.querySelector('.toc-headings');
+              headings && headings.addEventListener('click', function(event) {
+                var el = event.target;
+                while(el !== headings){
+                  if (el.tagName === 'A') {
+                    document.body.classList.remove('tocActive');
+                    break;
+                  } else{
+                    el = el.parentNode;
+                  }
+                }
+              }, false);
+
+              function createToggler(togglerSelector, targetSelector, className) {
+                var toggler = document.querySelector(togglerSelector);
+                var target = document.querySelector(targetSelector);
+
+                if (!toggler) {
+                  return;
+                }
+
+                toggler.onclick = function(event) {
+                  event.preventDefault();
+
+                  target.classList.toggle(className);
+                };
+              }
+            });
+        </script></nav></div><div class="container mainContainer docsContainer"><div class="wrapper"><div class="post"><header class="postHeader"><h1 id="__docusaurus" class="postHeaderTitle">Starter SNMP Plugin</h1></header><article><div><span><h3><a class="anchor" aria-hidden="true" id="writing-your-first-snmp-polling-plugin"></a><a href="#writing-your-first-snmp-polling-plugin" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Writing your first SNMP Polling Plugin.</h3>
+<p>If you've been exploring the Panoptes code base, then you have most likely come across the PanoptesSNMPBasePlugin. Every SNMP plugin inherits from this class.
+It automatically provides the inheriting class with the correct SNMP handle (V2, V3, Yahoo Steamroller Proxy), error handling, and hooks + logging to run the plugin.
+If inheriting from the PanoptesSNMPBasePlugin, the user only needs to implement the get_results() -&gt; PanoptesMetricsGroupSet function; everything else is taken care of by hidden function calls. While this is great,it has a steeper learning curve for individuals new to Panoptes who are looking to write their first SNMP Plugin. The SandboxSNMPPollingPlugin provides new plugin authors a basic skeleton that they can use to hit the ground running. This skeleton is executable in a dev environment for test
+and development. Instructions are provided below to transform it into a runnable plugin.</p>
+<h4><a class="anchor" aria-hidden="true" id="sandbox_snmp_polling_pluginpy"></a><a href="#sandbox_snmp_polling_pluginpy" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>sandbox_snmp_polling_plugin.py</h4>
+<pre><code class="hljs css language-python3"><span class="hljs-keyword">from</span> yahoo_panoptes.framework.utilities.snmp.connection <span class="hljs-keyword">import</span> PanoptesSNMPV2Connection
+<span class="hljs-keyword">from</span> typing <span class="hljs-keyword">import</span> Dict, Any
+<span class="hljs-keyword">from</span> yahoo_panoptes.polling.polling_plugin <span class="hljs-keyword">import</span> PanoptesPollingPlugin
+<span class="hljs-keyword">from</span> yahoo_panoptes.framework.metrics <span class="hljs-keyword">import</span> PanoptesMetricsGroupSet, PanoptesMetricsGroup, \
+    PanoptesMetric, PanoptesMetricType, PanoptesMetricDimension
+<span class="hljs-keyword">from</span> yahoo_panoptes.framework.plugins.context <span class="hljs-keyword">import</span> PanoptesPluginContext
+<span class="hljs-keyword">from</span> yahoo_panoptes.framework.plugins.base_snmp_plugin <span class="hljs-keyword">import</span> PanoptesSNMPBasePlugin
+<span class="hljs-keyword">from</span> yahoo_panoptes.framework.resources <span class="hljs-keyword">import</span> PanoptesResource
+
+<span class="hljs-comment"># OID Definitions http://cric.grenoble.cnrs.fr/Administrateurs/Outils/MIBS/?oid=1.3.6.1.2.1.31.1.1.1</span>
+ifXTable = <span class="hljs-string">'.1.3.6.1.2.1.31.1.1.1'</span>
+ifName = ifXTable + <span class="hljs-string">'.1'</span>
+ifHCInUcastPkts = ifXTable + <span class="hljs-string">'.7'</span>
+ifHCOutUcastPkts = ifXTable + <span class="hljs-string">'.11'</span>
+ifSpeed = ifXTable + <span class="hljs-string">'.15'</span>
+ifAlias = ifXTable + <span class="hljs-string">'.18'</span>
+
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">SandboxSNMPPollingPlugin</span>:</span>
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">__init__</span><span class="hljs-params">(self)</span>:</span>
+        <span class="hljs-comment"># Default SNMPv2 Connection - Wrapper over EasySNMP.</span>
+        self._snmp_connection: PanoptesSNMPV2Connection = <span class="hljs-literal">None</span>
+
+        self._interface_table = {} <span class="hljs-comment"># {[oid.index]: {[oid.name]: [oid.value]}</span>
+
+        <span class="hljs-comment"># Panoptes Time Series Container</span>
+        self._panoptes_metrics_group_set: PanoptesMetricsGroupSet = PanoptesMetricsGroupSet()
+
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">queryAndPopulateInterfaceTable</span><span class="hljs-params">(self, oid, name)</span> -&gt; <span class="hljs-keyword">None</span>:</span>
+        <span class="hljs-string">"""
+        oid: str - oid to query,
+        name: str - name of the oid to query. Used to store the value the index maps to
+        """</span>
+        varbinds = self._snmp_connection.bulk_walk(oid)
+        <span class="hljs-keyword">for</span> var <span class="hljs-keyword">in</span> varbinds:
+            <span class="hljs-keyword">if</span> var.index <span class="hljs-keyword">not</span> <span class="hljs-keyword">in</span> self._interface_table:
+                self._interface_table[var.index] = {}
+
+            self._interface_table[var.index][name] = var.value
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">buildInterfaceTable</span><span class="hljs-params">(self)</span> -&gt; <span class="hljs-keyword">None</span>:</span>
+        <span class="hljs-string">"""
+        Builds the `interface_table` which is then converted into Panoptes time series.
+        """</span>
+        self.queryAndPopulateInterfaceTable(ifName, <span class="hljs-string">'interface_name'</span>)
+        self.queryAndPopulateInterfaceTable(ifHCInUcastPkts, <span class="hljs-string">'interface_unicast_pkt_in'</span>)
+        self.queryAndPopulateInterfaceTable(ifHCOutUcastPkts, <span class="hljs-string">'interface_unicast_pkt_out'</span>)
+        self.queryAndPopulateInterfaceTable(ifSpeed, <span class="hljs-string">'interface_speed'</span>)
+        self.queryAndPopulateInterfaceTable(ifAlias, <span class="hljs-string">'interface_alias'</span>)
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">populatedMetricsGroupSetWithTimeSeries</span><span class="hljs-params">(self)</span> -&gt; <span class="hljs-keyword">None</span>:</span>
+        <span class="hljs-string">"""
+        Converts the `interface_table` into Panoptes time series, which will be
+        ingested downstream and stored in a time series database.
+
+        The text below shows the structure of how time series data is stored within the PanoptesMetricsGroupSet.
+        
+        PanoptesMetricsGroupSet&lt;set&gt;{
+            PanoptesMetricsGroup&lt;dict&gt;{
+                dimensions&lt;set&gt;: {
+                    PanoptesMetricDimension(name: str, value: str),
+                    PanoptesMetricDimension(name: str, value: str),
+                    ....
+                },
+                metrics&lt;set&gt;: {
+                    PanoptesMetric(metric_name: str, metric_value: number, metric_type: {1: 'COUNTER', 0: 'GAUGE'}),
+                    PanoptesMetric(metric_name: str, metric_value: number, metric_type: {1: 'COUNTER', 0: 'GAUGE'}),
+                }
+            },
+            PanoptesMetricsGroup&lt;dict&gt;{...},
+            PanoptesMetricsGroup&lt;dict&gt;{...}
+        }
+
+        Signatures:
+            PanoptesMetricsGroup(resource: PanoptesResource, group_type: str, interval: int)
+                - Timeseries container which is able to hold any number of metrics &amp; dimensions.
+
+            PanoptesMetricDimension(name: string_types, value: string_types)
+            PanoptesMetric(metric_name: string_types, metric_value: number, metric_type: {1: 'COUNTER', 0: 'GAUGE'})
+                - Note: Panoptes performs rate conversions specified in the .panoptes-plugin file
+        """</span>
+        <span class="hljs-keyword">for</span> index, data <span class="hljs-keyword">in</span> self._interface_table.items():
+
+            <span class="hljs-comment"># In the next iteration a PanoptesResource won't have to be  passed this way to the PanoptesMetricsGroup.</span>
+            <span class="hljs-comment"># This will be substituted with a real resource, once the plugin is moved out of sandbox mode.</span>
+            panoptes_metrics_group = PanoptesMetricsGroup(PanoptesResource(resource_site=<span class="hljs-string">'test'</span>,
+                                                                           resource_class=<span class="hljs-string">'test'</span>,
+                                                                           resource_subclass=<span class="hljs-string">'test'</span>,
+                                                                           resource_type=<span class="hljs-string">'test'</span>,
+                                                                           resource_id=<span class="hljs-string">'test'</span>,
+                                                                           resource_endpoint=<span class="hljs-string">'test'</span>,
+                                                                           resource_plugin=<span class="hljs-string">'test'</span>),
+                                                          <span class="hljs-string">'interface_data'</span>, <span class="hljs-number">60</span>)
+
+            panoptes_metrics_group.add_dimension(
+                PanoptesMetricDimension(<span class="hljs-string">'interface_name'</span>, data[<span class="hljs-string">'interface_name'</span>]))
+            panoptes_metrics_group.add_dimension(
+                PanoptesMetricDimension(<span class="hljs-string">'interface_alias'</span>, data[<span class="hljs-string">'interface_alias'</span>] <span class="hljs-keyword">or</span> <span class="hljs-string">'no_alias'</span>))
+            panoptes_metrics_group.add_metric(
+                PanoptesMetric(<span class="hljs-string">'interface_speed'</span>, int(data[<span class="hljs-string">'interface_speed'</span>]), PanoptesMetricType.GAUGE))
+            panoptes_metrics_group.add_metric(
+                PanoptesMetric(<span class="hljs-string">'interface_unicast_pkt_in'</span>, int(data[<span class="hljs-string">'interface_unicast_pkt_in'</span>]), PanoptesMetricType.COUNTER))
+            panoptes_metrics_group.add_metric(
+                PanoptesMetric(<span class="hljs-string">'interface_unicast_pkt_out'</span>, int(data[<span class="hljs-string">'interface_unicast_pkt_out'</span>]), PanoptesMetricType.COUNTER))
+
+            self._panoptes_metrics_group_set.add(panoptes_metrics_group)
+
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">run</span><span class="hljs-params">(self)</span> -&gt; PanoptesMetricsGroupSet:</span>
+
+        self._snmp_connection = PanoptesSNMPV2Connection(host=<span class="hljs-string">'&lt;put-host-here&gt;'</span>,
+                                                         port=<span class="hljs-number">161</span>,
+                                                         timeout=<span class="hljs-number">20</span>,
+                                                         retries=<span class="hljs-number">2</span>,
+                                                         community=<span class="hljs-string">'&lt;fill me in&gt;'</span>)
+
+        self.buildInterfaceTable()
+        self.populatedMetricsGroupSetWithTimeSeries()
+
+        <span class="hljs-keyword">return</span> self._panoptes_metrics_group_set
+</code></pre>
+<p>Run the plugin locally and verify the output is what is expected.</p>
+<pre><code class="hljs css language-python3"><span class="hljs-variable">sandbox_polling_plugin</span> = <span class="hljs-function"><span class="hljs-title">SandboxSNMPPollingPlugin</span>()</span>
+
+<span class="hljs-variable">results</span> = <span class="hljs-variable">sandbox_polling_plugin.run</span>()
+
+<span class="hljs-variable">for</span> <span class="hljs-variable">timeseries</span> <span class="hljs-variable"><span class="hljs-keyword">in</span></span> <span class="hljs-variable">results</span>:
+    <span class="hljs-function"><span class="hljs-title">print</span>(<span class="hljs-variable">timeseries.json</span>)</span>
+</code></pre>
+<p>When a plugin's run() method is called it is passed a PanoptesContext object. The PanoptesContext holds connections to kafka, zookeeper, redis, along with device information of which the device is to be run against.
+The following changes are needed to make this plugin 'runnable' are:</p>
+<ol>
+<li>It must inherit from PanoptesPollingPlugin - plugins are ignored in the loading process if they aren't a subclass.</li>
+<li>The PanoptesSNMPConnection must use the host contained within the PanoptesPluginContext passed to the run() function</li>
+<li>Logging must be added to the run method.</li>
+<li>The SandboxSNMPPollingPlugin must update instance variables set to none by accessing various properties PanoptesPluginContext object passed to run()</li>
+<li>The .panoptes-plugin file must be added.</li>
+</ol>
+<pre><code class="hljs css language-python3"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">SandboxSNMPPollingPlugin</span>(<span class="hljs-title">PanoptesPollingPlugin</span>): <span class="hljs-comment">#1 Inherit</span></span>
+    <span class="hljs-string">""</span><span class="hljs-string">"
+    SandboxSNMPPollingPlugin
+    "</span><span class="hljs-string">""</span>
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">__init__</span><span class="hljs-params">(<span class="hljs-keyword">self</span>)</span></span>:
+        <span class="hljs-comment"># Default SNMPv2 Connection - Wrapper over EasySNMP.</span>
+        <span class="hljs-keyword">self</span>.<span class="hljs-symbol">_snmp_connection:</span> PanoptesSNMPV2Connection = None
+        <span class="hljs-keyword">self</span>.<span class="hljs-symbol">_plugin_context:</span> PanoptesPluginContext = None
+        <span class="hljs-keyword">self</span>.<span class="hljs-symbol">_config:</span> Dict[str, Any] = {}
+        <span class="hljs-keyword">self</span>.<span class="hljs-symbol">_panoptes_metrics_group_set:</span> PanoptesMetricsGroupSet = PanoptesMetricsGroupSet()
+        <span class="hljs-keyword">self</span>.<span class="hljs-symbol">_interface_table:</span> Dict[str, Dict[str, str]] = {} <span class="hljs-comment"># {[oid.index]: {[oid.name]: [oid.value]}</span>
+        <span class="hljs-keyword">self</span>.<span class="hljs-symbol">_device:</span> PanoptesResource = None
+        <span class="hljs-keyword">self</span>.<span class="hljs-symbol">_execute_frequency:</span> int = <span class="hljs-number">60</span>
+        <span class="hljs-keyword">self</span>._logger = None
+
+        <span class="hljs-keyword">super</span>(SandboxSNMPPollingPlugin, <span class="hljs-keyword">self</span>).__init_<span class="hljs-number">_</span>()
+
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">queryAndPopulateInterfaceTable</span><span class="hljs-params">(<span class="hljs-keyword">self</span>, oid, name)</span></span> -&gt; <span class="hljs-symbol">None:</span>
+        <span class="hljs-string">""</span><span class="hljs-string">"
+        oid: str - oid to query,
+        name: str - name of the oid to query. Used to store the value the index maps to
+        "</span><span class="hljs-string">""</span>
+        varbinds = <span class="hljs-keyword">self</span>._snmp_connection.bulk_walk(oid)
+        <span class="hljs-keyword">for</span> var <span class="hljs-keyword">in</span> <span class="hljs-symbol">varbinds:</span>
+            <span class="hljs-keyword">if</span> var.index <span class="hljs-keyword">not</span> <span class="hljs-keyword">in</span> <span class="hljs-keyword">self</span>.<span class="hljs-symbol">_interface_table:</span>
+                <span class="hljs-keyword">self</span>._interface_table[var.index] = {}
+
+            <span class="hljs-keyword">self</span>._interface_table[var.index][name] = var.value
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">buildInterfaceTable</span><span class="hljs-params">(<span class="hljs-keyword">self</span>)</span></span> -&gt; <span class="hljs-symbol">None:</span>
+        <span class="hljs-string">""</span><span class="hljs-string">"
+        Builds the `interface_table` which is then converted into Panoptes time series.
+        "</span><span class="hljs-string">""</span>
+        <span class="hljs-keyword">self</span>.queryAndPopulateInterfaceTable(ifName, <span class="hljs-string">'interface_name'</span>)
+        <span class="hljs-keyword">self</span>.queryAndPopulateInterfaceTable(ifHCInUcastPkts, <span class="hljs-string">'interface_unicast_pkt_in'</span>)
+        <span class="hljs-keyword">self</span>.queryAndPopulateInterfaceTable(ifHCOutUcastPkts, <span class="hljs-string">'interface_unicast_pkt_out'</span>)
+        <span class="hljs-keyword">self</span>.queryAndPopulateInterfaceTable(ifSpeed, <span class="hljs-string">'interface_speed'</span>)
+        <span class="hljs-keyword">self</span>.queryAndPopulateInterfaceTable(ifAlias, <span class="hljs-string">'interface_alias'</span>)
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">populateMetricsGroupSetWithTimeSeries</span><span class="hljs-params">(<span class="hljs-keyword">self</span>)</span></span>:
+        <span class="hljs-string">""</span><span class="hljs-string">"
+        Converts the `interface_table` into Panoptes time series, which will be
+        ingested downstream and stored in a time series database.
+
+        The text below shows the structure of how time series data is stored within the PanoptesMetricsGroupSet.
+
+        PanoptesMetricsGroupSet&lt;set&gt;{
+            PanoptesMetricsGroup&lt;dict&gt;{
+                dimensions&lt;set&gt;: {
+                    PanoptesMetricDimension(name: str, value: str),
+                    PanoptesMetricDimension(name: str, value: str),
+                    ....
+                },
+                metrics&lt;set&gt;: {
+                    PanoptesMetric(metric_name: str, metric_value: number, metric_type: {1: 'COUNTER', 0: 'GAUGE'}),
+                    PanoptesMetric(metric_name: str, metric_value: number, metric_type: {1: 'COUNTER', 0: 'GAUGE'}),
+                }
+            },
+            PanoptesMetricsGroup&lt;dict&gt;{...},
+            PanoptesMetricsGroup&lt;dict&gt;{...}
+        }
+
+        Signatures:
+            PanoptesMetricsGroup(resource: PanoptesResource, group_type: str, interval: int)
+                - Timeseries container which is able to hold any number of metrics &amp; dimensions.
+
+            PanoptesMetricDimension(name: string_types, value: string_types)
+            PanoptesMetric(metric_name: string_types, metric_value: number, metric_type: {1: 'COUNTER', 0: 'GAUGE'})
+                - Note: Panoptes performs rate conversions specified in the .panoptes-plugin file
+
+        "</span><span class="hljs-string">""</span>
+        <span class="hljs-keyword">for</span> index, data <span class="hljs-keyword">in</span> <span class="hljs-keyword">self</span>._interface_table.items():
+
+            <span class="hljs-comment"># 2. Pass the resource here along with the execution frequency (provided to run() inside of the panoptes_context)</span>
+            panoptes_metrics_group = PanoptesMetricsGroup(<span class="hljs-keyword">self</span>._device, <span class="hljs-string">'interface_data'</span>, <span class="hljs-keyword">self</span>._execute_frequency) 
+
+            panoptes_metrics_group.add_dimension(
+                PanoptesMetricDimension(<span class="hljs-string">'interface_name'</span>, data[<span class="hljs-string">'interface_name'</span>]))
+            panoptes_metrics_group.add_dimension(
+                PanoptesMetricDimension(<span class="hljs-string">'interface_alias'</span>, data[<span class="hljs-string">'interface_alias'</span>] <span class="hljs-keyword">or</span> <span class="hljs-string">'no_alias'</span>))
+            panoptes_metrics_group.add_metric(
+                PanoptesMetric(<span class="hljs-string">'interface_speed'</span>, int(data[<span class="hljs-string">'interface_speed'</span>]), PanoptesMetricType.GAUGE))
+            panoptes_metrics_group.add_metric(
+                PanoptesMetric(<span class="hljs-string">'interface_unicast_pkt_in'</span>, int(data[<span class="hljs-string">'interface_unicast_pkt_in'</span>]), PanoptesMetricType.COUNTER))
+            panoptes_metrics_group.add_metric(
+                PanoptesMetric(<span class="hljs-string">'interface_unicast_pkt_out'</span>, int(data[<span class="hljs-string">'interface_unicast_pkt_out'</span>]), PanoptesMetricType.COUNTER))
+
+            <span class="hljs-keyword">self</span>._panoptes_metrics_group_set.add(panoptes_metrics_group)
+
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">run</span><span class="hljs-params">(<span class="hljs-keyword">self</span>, <span class="hljs-symbol">context:</span> PanoptesPluginContext)</span></span> -&gt; <span class="hljs-symbol">PanoptesMetricsGroupSet:</span>
+        <span class="hljs-comment"># 4) Update instance variables using the PanoptesPluginContext properties.</span>
+        <span class="hljs-keyword">self</span>._plugin_context = context
+        <span class="hljs-keyword">self</span>._config = context.config
+        <span class="hljs-keyword">self</span>._logger = context.logger
+        <span class="hljs-keyword">self</span>._device = context.data
+        <span class="hljs-keyword">self</span>._execute_frequency = int(context.config[<span class="hljs-string">'main'</span>][<span class="hljs-string">'execute_frequency'</span>]) <span class="hljs-comment"># Set the execution frequency</span>
+        <span class="hljs-keyword">self</span>._snmp_connection = PanoptesSNMPV2Connection(host=<span class="hljs-keyword">self</span>._device.resource_endpoint, <span class="hljs-comment"># 2. Use device info from the panoptes context passed to run()</span>
+                                                         port=<span class="hljs-number">161</span>,
+                                                         timeout=<span class="hljs-number">20</span>,
+                                                         retries=<span class="hljs-number">2</span>,
+                                                         community=<span class="hljs-string">'&lt;fill me in&gt;'</span>)
+        <span class="hljs-keyword">self</span>._logger.info(<span class="hljs-string">"Running {} against {}"</span>.format(type(<span class="hljs-keyword">self</span>).__name_<span class="hljs-number">_</span>, <span class="hljs-keyword">self</span>._device))
+
+        start_time = time.time()
+        <span class="hljs-keyword">self</span>.buildInterfaceTable()
+        <span class="hljs-keyword">self</span>.populateMetricsGroupSetWithTimeSeries()
+        end_time = time.time()
+
+        <span class="hljs-keyword">self</span>._logger.info(
+            <span class="hljs-string">"{} ran against device {} in {:.2f} seconds, {} metrics produced"</span>.format(
+                type(<span class="hljs-keyword">self</span>).__name_<span class="hljs-number">_</span>, <span class="hljs-keyword">self</span>._device, end_time - start_time, len(<span class="hljs-keyword">self</span>._panoptes_metrics_group_set))
+        ) <span class="hljs-comment"># 3). Add logging.</span>
+
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">self</span>._panoptes_metrics_group_set
+</code></pre>
+<ol start="5">
+<li>.panoptes-plugin file</li>
+</ol>
+<pre><code class="hljs"><span class="hljs-section">[Core]</span>
+<span class="hljs-attr">Name</span> = Sandbox SNMP Polling Plugin
+<span class="hljs-attr">Module</span> = /home/panoptes_v/lib/python3.<span class="hljs-number">6</span>/site-packages/yahoo_panoptes/plugins/polling/sandbox_plugin/sandbox_snmp_polling_plugin.py
+
+<span class="hljs-section">[Documentation]</span>
+<span class="hljs-attr">Author</span> = &lt;Your Name&gt;
+<span class="hljs-attr">Version</span> = <span class="hljs-number">0.1</span>
+<span class="hljs-attr">Website</span> = github.com/&lt;you&gt;
+<span class="hljs-attr">Description</span> = This is a tutorial plugin
+
+<span class="hljs-section">[main]</span>
+<span class="hljs-attr">execute_frequency</span> = <span class="hljs-number">60</span>
+<span class="hljs-attr">resource_filter</span> = resource_id = <span class="hljs-string">"tutorial_device"</span>
+<span class="hljs-attr">namespace</span> = metrics
+
+<span class="hljs-section">[transforms]</span>
+<span class="hljs-attr">interface_data</span> = rate:interface_data:interface_unicast_pkt_in,interface_unicast_pkt_out
+</code></pre>
+<p>Great! You have written and converted your first SNMP Panoptes Polling Plugin.</p>
+<p>Resulting time series data after transformations.</p>
+<pre><code class="hljs css language-json">{
+    <span class="hljs-attr">"metrics_group_type"</span>: <span class="hljs-string">"interface_data"</span>,
+    <span class="hljs-attr">"metrics_group_interval"</span>: <span class="hljs-number">60</span>,
+    <span class="hljs-attr">"metrics_group_creation_timestamp"</span>: <span class="hljs-number">1580949986.184</span>,
+    <span class="hljs-attr">"metrics_group_schema_version"</span>: <span class="hljs-string">"0.2"</span>,
+    <span class="hljs-attr">"resource"</span>: {
+        <span class="hljs-attr">"resource_site"</span>: <span class="hljs-string">"test"</span>,
+        <span class="hljs-attr">"resource_class"</span>: <span class="hljs-string">"test"</span>,
+        <span class="hljs-attr">"resource_subclass"</span>: <span class="hljs-string">"test"</span>,
+        <span class="hljs-attr">"resource_type"</span>: <span class="hljs-string">"test"</span>,
+        <span class="hljs-attr">"resource_id"</span>: <span class="hljs-string">"test"</span>,
+        <span class="hljs-attr">"resource_endpoint"</span>: <span class="hljs-string">"test"</span>,
+        <span class="hljs-attr">"resource_metadata"</span>: {
+            <span class="hljs-attr">"_resource_ttl"</span>: <span class="hljs-string">"604800"</span>
+        },
+        <span class="hljs-attr">"resource_creation_timestamp"</span>: <span class="hljs-number">1580949986.184</span>,
+        <span class="hljs-attr">"resource_plugin"</span>: <span class="hljs-string">"test"</span>
+    },
+    <span class="hljs-attr">"metrics"</span>: [
+        {
+            <span class="hljs-attr">"metric_creation_timestamp"</span>: <span class="hljs-number">1580945950.852</span>,
+            <span class="hljs-attr">"metric_name"</span>: <span class="hljs-string">"interface_unicast_pkt_in"</span>,
+            <span class="hljs-attr">"metric_value"</span>: <span class="hljs-number">195448</span>,
+            <span class="hljs-attr">"metric_type"</span>: <span class="hljs-string">"counter"</span>
+        },
+        {
+            <span class="hljs-attr">"metric_creation_timestamp"</span>: <span class="hljs-number">1580949986.185</span>,
+            <span class="hljs-attr">"metric_name"</span>: <span class="hljs-string">"interface_unicast_pkt_in"</span>,
+            <span class="hljs-attr">"metric_value"</span>: <span class="hljs-number">1</span>,
+            <span class="hljs-attr">"metric_type"</span>: <span class="hljs-string">"gauge"</span>
+        },
+        {
+            <span class="hljs-attr">"metric_creation_timestamp"</span>: <span class="hljs-number">1580945950.852</span>,
+            <span class="hljs-attr">"metric_name"</span>: <span class="hljs-string">"interface_unicast_pkt_out"</span>,
+            <span class="hljs-attr">"metric_value"</span>: <span class="hljs-number">5477552</span>,
+            <span class="hljs-attr">"metric_type"</span>: <span class="hljs-string">"counter"</span>
+        },
+        {
+            <span class="hljs-attr">"metric_creation_timestamp"</span>: <span class="hljs-number">1580949986.186</span>,
+            <span class="hljs-attr">"metric_name"</span>: <span class="hljs-string">"interface_unicast_pkt_out"</span>,
+            <span class="hljs-attr">"metric_value"</span>: <span class="hljs-number">1</span>,
+            <span class="hljs-attr">"metric_type"</span>: <span class="hljs-string">"gauge"</span>
+        },
+        {
+            <span class="hljs-attr">"metric_creation_timestamp"</span>: <span class="hljs-number">1580945950.852</span>,
+            <span class="hljs-attr">"metric_name"</span>: <span class="hljs-string">"interface_speed"</span>,
+            <span class="hljs-attr">"metric_value"</span>: <span class="hljs-number">1000</span>,
+            <span class="hljs-attr">"metric_type"</span>: <span class="hljs-string">"gauge"</span>
+        }
+    ],
+    <span class="hljs-attr">"dimensions"</span>: [
+        {
+            <span class="hljs-attr">"dimension_name"</span>: <span class="hljs-string">"interface_alias"</span>,
+            <span class="hljs-attr">"dimension_value"</span>: <span class="hljs-string">"no_alias"</span>
+        },
+        {
+            <span class="hljs-attr">"dimension_name"</span>: <span class="hljs-string">"interface_name"</span>,
+            <span class="hljs-attr">"dimension_value"</span>: <span class="hljs-string">"em1"</span>
+        }
+    ]
+}
+</code></pre>
+<p>The data shows up immediately and is graphable on Grafana.</p>
+<p align="left">
+  <img src="https://user-images.githubusercontent.com/29840907/73912210-d9dd7c00-48ab-11ea-9e6e-616008704207.png" width="450" title="Grafana Dashboard">
+</p>
+</span></div></article></div><div class="docLastUpdate"><em>Last updated on 2020-2-6 by Nathan Kamm</em></div><div class="docs-prevnext"><a class="docs-prev button" href="/docs/panoptes-reference/starter-napalm-plugin"><span class="arrow-prev">← </span><span>Starter Napalm Plugin</span></a></div></div></div><nav class="onPageNav"></nav></div><footer class="nav-footer" id="footer"><section class="sitemap"><a href="/" class="nav-home"><img src="/img/panoptes_eye_white.svg" alt="Panoptes" width="100" height="100"/></a><div><h5>Docs</h5><a href="/docs/getting-started">Getting Started</a><a href="/docs/support">Get Help</a><a href="/docs/contribute">Contribute</a></div><div><h5>Community</h5><a href="/support">Get Help</a><a href="https://panoptescommunity.slack.com/">Slack</a><a href="https://yahoodevelopers.tumblr.com/" target="_blank" rel="noreferrer noopener">Blog</a></div><div><h5>More</h5><a href="https://github.com/yahoo/panoptes" target="_blank" rel="noreferrer noopener">GitHub</a><a href="https://github.com/yahoo/panoptes/issues" target="_blank" rel="noreferrer noopener">Report an Issue</a></div></section><section class="copyright">Copyright 2020 Oath Inc. Unless otherwise noted, all content on this site is provided under the <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC-BY-SA-4.0 license</a>.</section></footer></div></body></html>
