@@ -299,7 +299,7 @@ The data is immediately graphable on Grafana.
 
 ![Grafana Image](https://user-images.githubusercontent.com/29840907/73494691-e4c87600-43ac-11ea-8adb-4316ba63aeab.png)
 
-NOTE: Panoptes has built in support for counter / rate transformations. In order to tell the plugin runner to perform the transformations, add a [transforms] key to the .panoptes-plugins and under it, add the metric names in the following format: `<metric_group_type> = rate:<COUNTERNAMES>`. For the example above, it would be `example = rate:context_switch_count`.
+NOTE: Panoptes has built in support for counter / rate transformations. In order to tell the plugin runner to perform the transformations, add a [transforms] key to the .panoptes-plugins and under it, add the metric names in the following format: `<metrics_group_type> = rate:<resulting_metrics_group_type>:<COUNTERNAMES>`. For the example above, it would be `example = rate:example:context_switch_count`.
 
 
 ```sh
@@ -319,7 +319,7 @@ resource_filter = resource_id = "tutorial_device"
 namespace = metrics
 
 [transforms]
-example = rate:context_switch_count
+example = rate:example:context_switch_count
 
 ```
 
