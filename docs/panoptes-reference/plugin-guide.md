@@ -325,7 +325,7 @@ def populateMetricsGroupSetWithTimeSeries(self) -> None:
 ```
 
 The plugin now returns the time series shown below.
-```
+```json
 {
   "metrics_group_type": "example",
   "metrics_group_interval": 60,
