@@ -55,9 +55,33 @@
               }
             });
         </script></nav></div><div class="container mainContainer docsContainer"><div class="wrapper"><div class="post"><header class="postHeader"><h1 id="__docusaurus" class="postHeaderTitle">Writing a Plugin</h1></header><article><div><span><p>Writing a Panoptes Polling Plugin</p>
-<p><strong>NOTE</strong> This tutorial is written assuming the reader has already read the <code>plugin-overview</code> docs <a href="https://getpanoptes.io/docs/panoptes-reference/plugin-overview">here</a> and has the <a href="https://github.com/yahoo/panoptes_docker">docker</a> running.</p>
+<p><strong>NOTE</strong> This tutorial is written assuming the reader has already read the <code>plugin-overview</code> docs <a href="https://getpanoptes.io/docs/panoptes-reference/plugin-overview">here</a>, has the <a href="https://github.com/yahoo/panoptes_docker">docker</a> running and is working out of your local <code>panoptes_docker/resources/panoptes/polling/plugins</code> directory which is mounted directly in the container. All changes in the plugins directory are immediately mirrorred and are live in the container.</p>
+<pre><code class="hljs"><span class="hljs-selector-tag">panoptes_docker</span> % <span class="hljs-selector-tag">tree</span>
+<span class="hljs-selector-tag">panoptes_docker</span>
+├── <span class="hljs-selector-tag">Code-of-Conduct</span><span class="hljs-selector-class">.md</span>
+├── <span class="hljs-selector-tag">Contributing</span><span class="hljs-selector-class">.md</span>
+├── <span class="hljs-selector-tag">Dockerfile</span>
+├── <span class="hljs-selector-tag">LICENSE</span>
+├── <span class="hljs-selector-tag">Readme</span><span class="hljs-selector-class">.md</span>
+├── <span class="hljs-selector-tag">docker_quickstart</span><span class="hljs-selector-class">.md</span>
+└── <span class="hljs-selector-tag">resources</span>
+    ├── <span class="hljs-selector-tag">panoptes</span>
+    │   ├── <span class="hljs-selector-tag">polling</span>
+    │   │   └── <span class="hljs-selector-tag">plugins</span> &lt;<span class="hljs-selector-tag">--</span> <span class="hljs-selector-tag">You</span> <span class="hljs-selector-tag">should</span> <span class="hljs-selector-tag">be</span> <span class="hljs-selector-tag">here</span>
+    │   │       ├── <span class="hljs-selector-tag">tutorial_plugin</span><span class="hljs-selector-class">.panoptes-plugin</span><span class="hljs-selector-class">.example</span>
+    │   │       └── <span class="hljs-selector-tag">tutorial_plugin</span><span class="hljs-selector-class">.py</span>
+........
+</code></pre>
+<p>Shown above is the tree structure of the <a href="https://github.com/yahoo/panoptes_docker">panoptes docker</a> director you should be working out of.</p>
+<p>If you haven't cloned the docker, run the following commands to get caught up.</p>
+<pre><code class="hljs css language-sh">git <span class="hljs-built_in">clone</span> https://github.com/yahoo/panoptes_docker
+<span class="hljs-built_in">cd</span> panoptes_docker
+docker build . -t panoptes_docker
+docker run -d --sysctl net.core.somaxconn=511 -v `<span class="hljs-built_in">pwd</span>`/resources/panoptes/polling/plugins:/home/panoptes_v/lib/python3.6/site-packages/yahoo_panoptes/plugins/polling/mounted --name=<span class="hljs-string">"panoptes_docker"</span> --shm-size=2G -p 127.0.0.1:8080:3000/tcp panoptes_docker
+<span class="hljs-built_in">cd</span> resources/panoptes/polling/plugins
+</code></pre>
 <ol>
-<li>Start With The Provided Plugin Skeleton</li>
+<li>Start With The Provided Plugin Skeleton and paste it into the tutorial_plugin.py file.</li>
 </ol>
 <pre><code class="hljs css language-python"><span class="hljs-keyword">from</span> typing <span class="hljs-keyword">import</span> Dict, Any
 <span class="hljs-keyword">import</span> time
@@ -148,24 +172,24 @@
         <span class="hljs-keyword">return</span> self._panoptes_metrics_group_set
         
 </code></pre>
-<p>To run this plugin inside of the docker container. Please follow the steps outlined below.</p>
-<ol>
-<li><p>Add a <code>resource</code> for the plugin to run against.</p>
+<p>For the docker container to run this plugin. Please follow the steps outlined below.</p>
+<ol start="2">
+<li><p>From inside the container, add a <code>resource</code> for the plugin to run against.</p>
 <ul>
 <li><code>nano /home/panoptes/conf/localhost.json</code> and add the additional device shown below.</li>
 </ul></li>
 </ol>
-<pre><code class="hljs">{
-    &quot;resource_plugin&quot;: &quot;plugin_discovery_from_json_file&quot;,
-    &quot;resource_site&quot;: &quot;local&quot;,
-    &quot;resource_class&quot;: &quot;system&quot;,
-    &quot;resource_subclass&quot;: &quot;host&quot;,
-    &quot;resource_type&quot;: &quot;generic&quot;,
-    &quot;resource_id&quot;: &quot;tutorial_device&quot;,
-    &quot;resource_endpoint&quot;: &quot;localhost&quot;,
-    &quot;resource_creation_timestamp&quot;: &quot;1512629517.03121&quot;,
-    &quot;resource_metadata&quot;: {
-        &quot;_resource_ttl&quot;: &quot;900&quot;
+<pre><code class="hljs css language-json">{
+    <span class="hljs-attr">"resource_plugin"</span>: <span class="hljs-string">"plugin_discovery_from_json_file"</span>,
+    <span class="hljs-attr">"resource_site"</span>: <span class="hljs-string">"local"</span>,
+    <span class="hljs-attr">"resource_class"</span>: <span class="hljs-string">"system"</span>,
+    <span class="hljs-attr">"resource_subclass"</span>: <span class="hljs-string">"host"</span>,
+    <span class="hljs-attr">"resource_type"</span>: <span class="hljs-string">"generic"</span>,
+    <span class="hljs-attr">"resource_id"</span>: <span class="hljs-string">"tutorial_device"</span>,
+    <span class="hljs-attr">"resource_endpoint"</span>: <span class="hljs-string">"localhost"</span>,
+    <span class="hljs-attr">"resource_creation_timestamp"</span>: <span class="hljs-string">"1512629517.03121"</span>,
+    <span class="hljs-attr">"resource_metadata"</span>: {
+        <span class="hljs-attr">"_resource_ttl"</span>: <span class="hljs-string">"900"</span>
     }
 }
 </code></pre>
@@ -201,33 +225,24 @@
     }
 ]
 </code></pre>
-<p>The next time the discovery plugin runs (60 second interval) this resource will be discovered and added to the internal device store with a 7 day TTL.</p>
+<p>The next time the discovery plugin runs (60 second interval), this resource will be discovered and added to the internal device store.</p>
 <p>To verify it this is the case you do either of the following.</p>
 <p>i) Check redis with <code>echo &quot;keys *panoptes:resource_manager_kv*&quot; | /usr/bin/redis-cli</code> look for the <code>id|tutorial_device</code></p>
-<pre><code class="hljs">    root@dbe423716f34:/home/panoptes# echo &quot;keys *panoptes:resource_manager_kv*&quot; | /usr/bin/redis-cli
+<pre><code class="hljs">    [ Inside The Container ]
+    root@dbe423716f34:/home/panoptes# echo &quot;keys *panoptes:resource_manager_kv*&quot; | /usr/bin/redis-cli
     &quot;panoptes:resource_manager_kv:resource:plugin|plugin_discovery_from_json_file|site|local|class|tutorial|subclass|host|type|generic|id|tutorial_device|endpoint|localhost&quot;
     &quot;panoptes:resource_manager_kv:resource:plugin|plugin_discovery_from_json_file|site|local|class|system|subclass|host|type|generic|id|localhost|endpoint|localhost&quot;
 </code></pre>
-<p>ii) Tail the discovery plugin agent logs and look that the logged number of devices discovered increased (2 members).</p>
-<pre><code class="hljs">    tail -f discovery_plugin_agent.log
+<p>ii) Tail the discovery plugin agent logs and verify that the logged number of devices discovered increased (2 members).</p>
+<pre><code class="hljs">    [ Inside The Container ]
+    tail -f /home/panoptes/logs/discovery_plugin_agent.log
     [INFO] [runner] [info():76] [PID:629 TID:140015174395712] [From JSON File Discovery Plugin] Plugin returned a result set with 2 members
 </code></pre>
-<ol start="2">
-<li><p>Make a directory to place the plugin.py and the .panoptes-plugin file for yapsy to load.</p>
-<ul>
-<li><code>mkdir -p /home/panoptes_v/lib/python3.6/site-packages/yahoo_panoptes/plugins/polling/tutorial_plugin</code></li>
-</ul></li>
-<li><p>Create test_polling_plugin file and copy the TutorialPollingPlugin class along with all python imports into it</p>
-<ul>
-<li><code>nano /home/panoptes_v/lib/python3.6/site-packages/yahoo_panoptes/plugins/polling/tutorial_plugin/tutorial_polling_plugin.py</code></li>
-</ul></li>
-<li><p>Add the .panoptes-plugin file.</p>
-<ul>
-<li><code>nano /home/panoptes_v/lib/python3.6/site-packages/yahoo_panoptes/plugins/polling/tutorial_plugin/tutorial_polling_plugin.panoptes-plugin</code></li>
-</ul>
+<ol start="3">
+<li><p>Copy the following .panoptes-plugin file into tutorial_plugin.panoptes-plugin.example and rename it to remove the '.example' suffix. Remember the scheduler recursively scans the directories for all files which end with '.panoptes-plugin', if it doesn't match it's ignored.</p>
 <pre><code class="hljs css language-sh">[Core]
 Name = Tutorial Plugin
-Module = /home/panoptes_v/lib/python3.6/site-packages/yahoo_panoptes/plugins/polling/tutorial_plugin/tutorial_polling_plugin.py
+Module = /home/panoptes_v/lib/python3.6/site-packages/yahoo_panoptes/plugins/polling/mounted/tutorial_plugin.py
 
 [Documentation]
 Author = &lt;Your Name&gt;
@@ -240,8 +255,8 @@ execute_frequency = 60
 resource_filter = resource_id = <span class="hljs-string">"tutorial_device"</span>
 namespace = metrics
 </code></pre></li>
-<li><p>The plugin shown will run, however will only produce an empty set <code>{}</code>. This is because no time series data is ever added to the PanoptesMetricsGroupSet.
-Extend the functionality of the plugin by implementing the populatedMetricsGroupSetWithTimeSeries() function.</p></li>
+<li><p>The next time the scheduler runs it will pick up the 'tutorial_plugin.panoptes-plugin' file and execute the plugin. However, this plugin will produce an empty set <code>{}</code>. This is because no time series data is ever added to the PanoptesMetricsGroupSet.</p></li>
+<li><p>Extend the functionality of the plugin by implementing the populatedMetricsGroupSetWithTimeSeries() function.</p></li>
 </ol>
 <pre><code class="hljs css language-python3">def populated<span class="hljs-constructor">MetricsGroupSetWithTimeSeries(<span class="hljs-params">self</span>)</span> -&gt; None:
     panoptes_metrics_group = <span class="hljs-constructor">PanoptesMetricsGroup(<span class="hljs-params">self</span>.<span class="hljs-params">_device</span>, '<span class="hljs-params">example</span>', <span class="hljs-params">self</span>.<span class="hljs-params">_execute_frequency</span>)</span>
@@ -269,6 +284,13 @@ Extend the functionality of the plugin by implementing the populatedMetricsGroup
     <span class="hljs-attr">"metrics"</span>: [],
     <span class="hljs-attr">"dimensions"</span>: []
 }
+</code></pre>
+<p>To see the output of the plugin, add the following code to the end of the run() function right before the _panoptes_metrics_group_set is returned.</p>
+<pre><code class="hljs css language-python3"><span class="hljs-selector-tag">for</span> <span class="hljs-selector-tag">panoptes_metrics_group</span> <span class="hljs-selector-tag">in</span> <span class="hljs-selector-tag">self</span><span class="hljs-selector-class">._panoptes_metrics_group_set</span>:
+    <span class="hljs-selector-tag">self</span><span class="hljs-selector-class">._logger</span><span class="hljs-selector-class">.info</span>(<span class="hljs-selector-tag">panoptes_metrics_group</span><span class="hljs-selector-class">.json</span>)
+</code></pre>
+<p>Logs are routed to the polling_plugins.log file. To see the results open up a new terminal, exec into the panoptes_docker container and tail the log file.</p>
+<pre><code class="hljs">tail -f /<span class="hljs-built_in">home</span>/panoptes/logs/polling_plugins.<span class="hljs-built_in">log</span>
 </code></pre>
 <p>This is a great start, but there still isn't any meaningful information stored within the MetricsGroup. Extend the populateMetricsGroupSetWithTimeSeries function and add data.</p>
 <pre><code class="hljs css language-python"><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">populateMetricsGroupSetWithTimeSeries</span><span class="hljs-params">(self)</span> -&gt; <span class="hljs-keyword">None</span>:</span>
@@ -327,7 +349,8 @@ Extend the functionality of the plugin by implementing the populatedMetricsGroup
 <p>The plugin's callback function will place the output shown above on the message queue. This will be consumed by the downstream InfluxDB consumer.
 The data is immediately graphable on Grafana.</p>
 <p><img src="https://user-images.githubusercontent.com/29840907/73494691-e4c87600-43ac-11ea-8adb-4316ba63aeab.png" alt="Grafana Image"></p>
-<p>NOTE: Panoptes has built in support for counter / rate transformations. In order to tell the plugin runner to perform the transformations, add a [transforms] key to the .panoptes-plugins and under it, add the metric names in the following format: <code>&lt;metrics_group_type&gt; = rate:&lt;resulting_metrics_group_type&gt;:&lt;COUNTERNAMES&gt;</code>. For the example above, it would be <code>example = rate:example:context_switch_count</code>.</p>
+<p>You have now finished writing a basic Panoptes polling plugin, below are additional tips.</p>
+<p>Panoptes has built in support for counter / rate transformations. In order to tell the plugin runner to perform the transformations, add a [transforms] key to the .panoptes-plugins and under it, add the metric names in the following format: <code>&lt;metrics_group_type&gt; = rate:&lt;resulting_metrics_group_type&gt;:&lt;COUNTERNAMES&gt;</code>. For the example above, it would be <code>example = rate:example:context_switch_count</code>.</p>
 <pre><code class="hljs css language-sh">[Core]
 Name = Tutorial Plugin
 Module = /home/panoptes_v/lib/python3.6/site-packages/yahoo_panoptes/plugins/polling/tutorial_plugin/tutorial_polling_plugin.py
@@ -366,4 +389,4 @@ example = rate:example:context_switch_count
                                                               PanoptesMetricType.GAUGE))
         self._panoptes_metrics_group_set.add(api_call_metrics_group)
 </code></pre>
-</span></div></article></div><div class="docLastUpdate"><em>Last updated on 2020-2-6 by Nathan Kamm</em></div><div class="docs-prevnext"><a class="docs-prev button" href="/docs/panoptes-reference/generic-snmp-polling-dsl"><span class="arrow-prev">← </span><span>Generic SNMP Polling Plugin DSL</span></a><a class="docs-next button" href="/docs/panoptes-reference/starter-napalm-plugin"><span>Starter Napalm Plugin</span><span class="arrow-next"> →</span></a></div></div></div><nav class="onPageNav"></nav></div><footer class="nav-footer" id="footer"><section class="sitemap"><a href="/" class="nav-home"><img src="/img/panoptes_eye_white.svg" alt="Panoptes" width="100" height="100"/></a><div><h5>Docs</h5><a href="/docs/getting-started">Getting Started</a><a href="/docs/support">Get Help</a><a href="/docs/contribute">Contribute</a></div><div><h5>Community</h5><a href="/support">Get Help</a><a href="https://panoptescommunity.slack.com/">Slack</a><a href="https://yahoodevelopers.tumblr.com/" target="_blank" rel="noreferrer noopener">Blog</a></div><div><h5>More</h5><a href="https://github.com/yahoo/panoptes" target="_blank" rel="noreferrer noopener">GitHub</a><a href="https://github.com/yahoo/panoptes/issues" target="_blank" rel="noreferrer noopener">Report an Issue</a></div></section><section class="copyright">Copyright 2020 Oath Inc. Unless otherwise noted, all content on this site is provided under the <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC-BY-SA-4.0 license</a>.</section></footer></div></body></html>
+</span></div></article></div><div class="docLastUpdate"><em>Last updated on 2020-2-7 by Nathan Kamm</em></div><div class="docs-prevnext"><a class="docs-prev button" href="/docs/panoptes-reference/generic-snmp-polling-dsl"><span class="arrow-prev">← </span><span>Generic SNMP Polling Plugin DSL</span></a><a class="docs-next button" href="/docs/panoptes-reference/starter-napalm-plugin"><span>Starter Napalm Plugin</span><span class="arrow-next"> →</span></a></div></div></div><nav class="onPageNav"></nav></div><footer class="nav-footer" id="footer"><section class="sitemap"><a href="/" class="nav-home"><img src="/img/panoptes_eye_white.svg" alt="Panoptes" width="100" height="100"/></a><div><h5>Docs</h5><a href="/docs/getting-started">Getting Started</a><a href="/docs/support">Get Help</a><a href="/docs/contribute">Contribute</a></div><div><h5>Community</h5><a href="/support">Get Help</a><a href="https://panoptescommunity.slack.com/">Slack</a><a href="https://yahoodevelopers.tumblr.com/" target="_blank" rel="noreferrer noopener">Blog</a></div><div><h5>More</h5><a href="https://github.com/yahoo/panoptes" target="_blank" rel="noreferrer noopener">GitHub</a><a href="https://github.com/yahoo/panoptes/issues" target="_blank" rel="noreferrer noopener">Report an Issue</a></div></section><section class="copyright">Copyright 2020 Oath Inc. Unless otherwise noted, all content on this site is provided under the <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC-BY-SA-4.0 license</a>.</section></footer></div></body></html>
