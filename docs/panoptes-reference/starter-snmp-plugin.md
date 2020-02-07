@@ -23,6 +23,8 @@ from yahoo_panoptes.framework.plugins.context import PanoptesPluginContext
 from yahoo_panoptes.framework.plugins.base_snmp_plugin import PanoptesSNMPBasePlugin
 from yahoo_panoptes.framework.resources import PanoptesResource
 
+import time
+
 # OID Definitions http://cric.grenoble.cnrs.fr/Administrateurs/Outils/MIBS/?oid=1.3.6.1.2.1.31.1.1.1
 ifXTable = '.1.3.6.1.2.1.31.1.1.1'
 ifName = ifXTable + '.1'
