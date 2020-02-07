@@ -6,9 +6,38 @@ sidebar_label: Writing A Plugin
 
 Writing a Panoptes Polling Plugin
 
-**NOTE** This tutorial is written assuming the reader has already read the `plugin-overview` docs [here](https://getpanoptes.io/docs/panoptes-reference/plugin-overview) and has the [docker](https://github.com/yahoo/panoptes_docker) running.
+**NOTE** This tutorial is written assuming the reader has already read the `plugin-overview` docs [here](https://getpanoptes.io/docs/panoptes-reference/plugin-overview), has the [docker](https://github.com/yahoo/panoptes_docker) running and is working out of your local `panoptes_docker/resources/panoptes/polling/plugins` directory which is mounted directly in the container. All changes in the plugins directory are immediately mirrorred and are live in the container.
 
-1) Start With The Provided Plugin Skeleton
+```
+panoptes_docker % tree
+panoptes_docker
+├── Code-of-Conduct.md
+├── Contributing.md
+├── Dockerfile
+├── LICENSE
+├── Readme.md
+├── docker_quickstart.md
+└── resources
+    ├── panoptes
+    │   ├── polling
+    │   │   └── plugins <-- You should be here
+    │   │       ├── tutorial_plugin.panoptes-plugin.example
+    │   │       └── tutorial_plugin.py
+........
+```
+Shown above is the tree structure of the [panoptes docker](https://github.com/yahoo/panoptes_docker) director you should be working out of.
+
+If you haven't cloned the docker, run the following commands to get caught up.
+
+```sh
+git clone https://github.com/yahoo/panoptes_docker
+cd panoptes_docker
+docker build . -t panoptes_docker
+docker run -d --sysctl net.core.somaxconn=511 -v `pwd`/resources/panoptes/polling/plugins:/home/panoptes_v/lib/python3.6/site-packages/yahoo_panoptes/plugins/polling/mounted --name="panoptes_docker" --shm-size=2G -p 127.0.0.1:8080:3000/tcp panoptes_docker
+cd resources/panoptes/polling/plugins
+```
+
+1) Start With The Provided Plugin Skeleton and paste it into the tutorial_plugin.py file.
 ```python
 from typing import Dict, Any
 import time
@@ -100,27 +129,28 @@ class TutorialPollingPlugin(PanoptesPollingPlugin):
         
 ```
 
-To run this plugin inside of the docker container. Please follow the steps outlined below. 
+For the docker container to run this plugin. Please follow the steps outlined below. 
 
-1. Add a `resource` for the plugin to run against.
+2. From inside the container, add a `resource` for the plugin to run against.
 
     - `nano /home/panoptes/conf/localhost.json` and add the additional device shown below.
     
     
-    
-    {
-        "resource_plugin": "plugin_discovery_from_json_file",
-        "resource_site": "local",
-        "resource_class": "system",
-        "resource_subclass": "host",
-        "resource_type": "generic",
-        "resource_id": "tutorial_device",
-        "resource_endpoint": "localhost",
-        "resource_creation_timestamp": "1512629517.03121",
-        "resource_metadata": {
-            "_resource_ttl": "900"
-        }
+```json
+{
+    "resource_plugin": "plugin_discovery_from_json_file",
+    "resource_site": "local",
+    "resource_class": "system",
+    "resource_subclass": "host",
+    "resource_type": "generic",
+    "resource_id": "tutorial_device",
+    "resource_endpoint": "localhost",
+    "resource_creation_timestamp": "1512629517.03121",
+    "resource_metadata": {
+        "_resource_ttl": "900"
     }
+}
+```
 (ctrl-x to exit)
 
 When finished the file should look like this.
@@ -155,38 +185,32 @@ When finished the file should look like this.
         }
     ]
 
-The next time the discovery plugin runs (60 second interval) this resource will be discovered and added to the internal device store with a 7 day TTL.
+The next time the discovery plugin runs (60 second interval), this resource will be discovered and added to the internal device store.
 
 To verify it this is the case you do either of the following.
 
 i) Check redis with `echo "keys *panoptes:resource_manager_kv*" | /usr/bin/redis-cli` look for the `id|tutorial_device`
         
-        
+        [ Inside The Container ]
         root@dbe423716f34:/home/panoptes# echo "keys *panoptes:resource_manager_kv*" | /usr/bin/redis-cli
         "panoptes:resource_manager_kv:resource:plugin|plugin_discovery_from_json_file|site|local|class|tutorial|subclass|host|type|generic|id|tutorial_device|endpoint|localhost"
         "panoptes:resource_manager_kv:resource:plugin|plugin_discovery_from_json_file|site|local|class|system|subclass|host|type|generic|id|localhost|endpoint|localhost"
         
    
             
-ii) Tail the discovery plugin agent logs and look that the logged number of devices discovered increased (2 members).
+ii) Tail the discovery plugin agent logs and verify that the logged number of devices discovered increased (2 members).
         
-        tail -f discovery_plugin_agent.log
+        [ Inside The Container ]
+        tail -f /home/panoptes/logs/discovery_plugin_agent.log
         [INFO] [runner] [info():76] [PID:629 TID:140015174395712] [From JSON File Discovery Plugin] Plugin returned a result set with 2 members
         
 
-2. Make a directory to place the plugin.py and the .panoptes-plugin file for yapsy to load.
-    - `mkdir -p /home/panoptes_v/lib/python3.6/site-packages/yahoo_panoptes/plugins/polling/tutorial_plugin`
-
-3. Create test_polling_plugin file and copy the TutorialPollingPlugin class along with all python imports into it
-    - `nano /home/panoptes_v/lib/python3.6/site-packages/yahoo_panoptes/plugins/polling/tutorial_plugin/tutorial_polling_plugin.py`
-        
-4. Add the .panoptes-plugin file. 
-    - `nano /home/panoptes_v/lib/python3.6/site-packages/yahoo_panoptes/plugins/polling/tutorial_plugin/tutorial_polling_plugin.panoptes-plugin`
+3. Copy the following .panoptes-plugin file into tutorial_plugin.panoptes-plugin.example and rename it to remove the '.example' suffix. Remember the scheduler recursively scans the directories for all files which end with '.panoptes-plugin', if it doesn't match it's ignored.
     
     ```sh
     [Core]
     Name = Tutorial Plugin
-    Module = /home/panoptes_v/lib/python3.6/site-packages/yahoo_panoptes/plugins/polling/tutorial_plugin/tutorial_polling_plugin.py
+    Module = /home/panoptes_v/lib/python3.6/site-packages/yahoo_panoptes/plugins/polling/mounted/tutorial_plugin.py
 
     [Documentation]
     Author = <Your Name>
@@ -200,8 +224,9 @@ ii) Tail the discovery plugin agent logs and look that the logged number of devi
     namespace = metrics
     ```
 
-5. The plugin shown will run, however will only produce an empty set `{}`. This is because no time series data is ever added to the PanoptesMetricsGroupSet. 
-Extend the functionality of the plugin by implementing the populatedMetricsGroupSetWithTimeSeries() function. 
+4. The next time the scheduler runs it will pick up the 'tutorial_plugin.panoptes-plugin' file and execute the plugin. However, this plugin will produce an empty set `{}`. This is because no time series data is ever added to the PanoptesMetricsGroupSet. 
+
+5. Extend the functionality of the plugin by implementing the populatedMetricsGroupSetWithTimeSeries() function. 
 
 ```python3
 def populatedMetricsGroupSetWithTimeSeries(self) -> None:
@@ -234,6 +259,21 @@ Those two additional lines will cause the plugin to produce the output shown bel
     "dimensions": []
 }
 ```
+
+To see the output of the plugin, add the following code to the end of the run() function right before the _panoptes_metrics_group_set is returned.
+
+
+```python3
+for panoptes_metrics_group in self._panoptes_metrics_group_set:
+    self._logger.info(panoptes_metrics_group.json)
+```
+
+Logs are routed to the polling_plugins.log file. To see the results open up a new terminal, exec into the panoptes_docker container and tail the log file.
+
+```
+tail -f /home/panoptes/logs/polling_plugins.log
+```
+
 
 This is a great start, but there still isn't any meaningful information stored within the MetricsGroup. Extend the populateMetricsGroupSetWithTimeSeries function and add data.
 
@@ -299,7 +339,9 @@ The data is immediately graphable on Grafana.
 
 ![Grafana Image](https://user-images.githubusercontent.com/29840907/73494691-e4c87600-43ac-11ea-8adb-4316ba63aeab.png)
 
-NOTE: Panoptes has built in support for counter / rate transformations. In order to tell the plugin runner to perform the transformations, add a [transforms] key to the .panoptes-plugins and under it, add the metric names in the following format: `<metrics_group_type> = rate:<resulting_metrics_group_type>:<COUNTERNAMES>`. For the example above, it would be `example = rate:example:context_switch_count`.
+You have now finished writing a basic Panoptes polling plugin, below are additional tips.
+
+Panoptes has built in support for counter / rate transformations. In order to tell the plugin runner to perform the transformations, add a [transforms] key to the .panoptes-plugins and under it, add the metric names in the following format: `<metrics_group_type> = rate:<resulting_metrics_group_type>:<COUNTERNAMES>`. For the example above, it would be `example = rate:example:context_switch_count`.
 
 
 ```sh
@@ -345,4 +387,5 @@ def populateMetricsGroupSetWithTimeSeries(self) -> None:
                                                               PanoptesMetricType.GAUGE))
         self._panoptes_metrics_group_set.add(api_call_metrics_group)
 ```
+    
     
