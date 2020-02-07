@@ -4,11 +4,20 @@ title: Writing a Plugin
 sidebar_label: Writing A Plugin
 ---
 
-Writing a Panoptes Polling Plugin
+## Writing a Panoptes Polling Plugin
 
-**NOTE** This tutorial is written assuming the reader has already read the `plugin-overview` docs [here](https://getpanoptes.io/docs/panoptes-reference/plugin-overview) and has the [docker](https://github.com/yahoo/panoptes_docker) running.
+This is a very self-contained tutorial that doesn't model a normal fork, branch and pull request against the repository.
 
-1) Start With The Provided Plugin Skeleton
+You'll start with three files: a plugin file, a panoptes-plugin configuration file, and a localhost.json file.   The 
+panoptes plugin file is python, the configuration is text, and localhost.json, not surprisingly, is json.  We've 
+provided the files below
+
+Build yourself a directory someplace to hold these files while testing.
+
+### The Tutorial Polling Plugin
+
+We've provided a skeleton plugin to get started - paste this into `tutorial/tutorial_plugin.py`;
+
 ```python
 from typing import Dict, Any
 import time
@@ -100,14 +109,42 @@ class TutorialPollingPlugin(PanoptesPollingPlugin):
         
 ```
 
-To run this plugin inside of the docker container. Please follow the steps outlined below. 
+### Tutorial .panoptes-plugin configuration file
 
-1. Add a `resource` for the plugin to run against.
+We've also supplied a skeleton for the plugin configuration file.  Fill in your own Author and website details, it's 
+your plugin.  The `Module` location is where on the inside of the panoptes_docker the plugin can be found.  We'll deal 
+with that later, but trust us for the moment.
 
-    - `nano /home/panoptes/conf/localhost.json` and add the additional device shown below.
-    
-    
-    
+Save this file as `tutorial/tutorial_plugin.panoptes-plugin`.  We name the files the same out of convention, and use 
+directories to separate and organize our plugins.
+
+```bash
+[Core]
+Name = Tutorial Plugin
+Module = /home/panoptes_v/lib/python3.6/site-packages/yahoo_panoptes/plugins/polling/tutorial_plugin/tutorial_plugin.py
+
+[Documentation]
+Author = <Your Name>
+Version = 0.1
+Website = github.com/<you>
+Description = This is a tutorial plugin
+
+[main]
+execute_frequency = 60
+resource_filter = resource_id = "tutorial_device"
+namespace = metrics
+```
+
+## Tutorial localhost.json
+
+Similarly, we've provided this file as well; paste into `conf/localhost.json`.
+This file essentially contains details of a fictional device that is actually localhost.
+
+The discovery plugin runs every 60 seconds and uses this file to queue devices for examination. Note that this is an 
+array of objects.
+
+```json
+[
     {
         "resource_plugin": "plugin_discovery_from_json_file",
         "resource_site": "local",
@@ -121,121 +158,157 @@ To run this plugin inside of the docker container. Please follow the steps outli
             "_resource_ttl": "900"
         }
     }
-(ctrl-x to exit)
+]
+```
 
-When finished the file should look like this.
+Now you should have a full set of files and be ready to take the next step.
 
-    root@dbe423716f34:/home/panoptes/conf# cat localhost.json 
-    [
-        {
-            "resource_plugin": "plugin_discovery_from_json_file",
-            "resource_site": "local",
-            "resource_class": "system",
-            "resource_subclass": "host",
-            "resource_type": "generic",
-            "resource_id": "localhost",
-            "resource_endpoint": "localhost",
-            "resource_creation_timestamp": "1512629517.03121",
-            "resource_metadata": {
-            "_resource_ttl": "900"
-            }
-        },
-        {
-            "resource_plugin": "plugin_discovery_from_json_file",
-            "resource_site": "local",
-            "resource_class": "tutorial",
-            "resource_subclass": "host",
-            "resource_type": "generic",
-            "resource_id": "tutorial_device",
-            "resource_endpoint": "localhost",
-            "resource_creation_timestamp": "1512629517.03121",
-            "resource_metadata": {
-            "_resource_ttl": "900"
-            }
-        }
-    ]
+for example;
+```
+.
+├── conf
+│   └── localhost.json
+└── tutorial
+    ├── tutorial_plugin.py
+    └── tutorial_plugin.panoptes-plugin
+```
 
-The next time the discovery plugin runs (60 second interval) this resource will be discovered and added to the internal device store with a 7 day TTL.
+## Running the plugin against Panoptes Docker
 
-To verify it this is the case you do either of the following.
+We're going to assume that you've installed docker.  After that, you can run this in the same directory you used 
+previously;
 
-i) Check redis with `echo "keys *panoptes:resource_manager_kv*" | /usr/bin/redis-cli` look for the `id|tutorial_device`
-        
-        
-        root@dbe423716f34:/home/panoptes# echo "keys *panoptes:resource_manager_kv*" | /usr/bin/redis-cli
-        "panoptes:resource_manager_kv:resource:plugin|plugin_discovery_from_json_file|site|local|class|tutorial|subclass|host|type|generic|id|tutorial_device|endpoint|localhost"
-        "panoptes:resource_manager_kv:resource:plugin|plugin_discovery_from_json_file|site|local|class|system|subclass|host|type|generic|id|localhost|endpoint|localhost"
-        
-   
-            
-ii) Tail the discovery plugin agent logs and look that the logged number of devices discovered increased (2 members).
-        
-        tail -f discovery_plugin_agent.log
-        [INFO] [runner] [info():76] [PID:629 TID:140015174395712] [From JSON File Discovery Plugin] Plugin returned a result set with 2 members
-        
+```bash
+git clone https://github.com/yahoo/panoptes_docker.git && \
+cd panoptes_docker && \
+docker build . -t panoptes_docker && \
+cd ..
+```
 
-2. Make a directory to place the plugin.py and the .panoptes-plugin file for yapsy to load.
-    - `mkdir -p /home/panoptes_v/lib/python3.6/site-packages/yahoo_panoptes/plugins/polling/tutorial_plugin`
+This will build a local docker image.  What we're going to do next is overlay our `localhost.json` on the container's 
+`localhost.json` and attach our test plugin to the correct place in the tree for Panoptes to pick up.  We'll do this 
+through volume mounting.
 
-3. Create test_polling_plugin file and copy the TutorialPollingPlugin class along with all python imports into it
-    - `nano /home/panoptes_v/lib/python3.6/site-packages/yahoo_panoptes/plugins/polling/tutorial_plugin/tutorial_polling_plugin.py`
-        
-4. Add the .panoptes-plugin file. 
-    - `nano /home/panoptes_v/lib/python3.6/site-packages/yahoo_panoptes/plugins/polling/tutorial_plugin/tutorial_polling_plugin.panoptes-plugin`
-    
-    ```sh
-    [Core]
-    Name = Tutorial Plugin
-    Module = /home/panoptes_v/lib/python3.6/site-packages/yahoo_panoptes/plugins/polling/tutorial_plugin/tutorial_polling_plugin.py
+```bash
+docker run -d \
+    --sysctl net.core.somaxconn=511 \
+    --name="panoptes_docker" \
+    --shm-size=2G \
+    -v $PWD/tutorial:/home/panoptes_v/lib/python3.6/site-packages/yahoo_panoptes/plugins/polling/tutorial_plugin \
+    -v $PWD/conf/localhost.json:/home/panoptes/conf/localhost.json \
+    -p 127.0.0.1:8080:3000/tcp \
+    panoptes_docker
+```
 
-    [Documentation]
-    Author = <Your Name>
-    Version = 0.1
-    Website = github.com/<you>
-    Description = This is a tutorial plugin
+At this point you should be able to check that the docker is running with `docker ps`.  We need one more step before 
+verifying results.  Log into the running container with;
 
-    [main]
-    execute_frequency = 60
-    resource_filter = resource_id = "tutorial_device"
-    namespace = metrics
-    ```
+```bash
+docker exec -it panoptes_docker bash
+```
 
-5. The plugin shown will run, however will only produce an empty set `{}`. This is because no time series data is ever added to the PanoptesMetricsGroupSet. 
-Extend the functionality of the plugin by implementing the populatedMetricsGroupSetWithTimeSeries() function. 
+That should give you root on the container.  Next, run this script.  It effectively updates the redis-cli with a couple 
+of environment variables referring to the device community strings, and we only require you do this because we couldn't 
+get it working during build time.
 
-```python3
-def populatedMetricsGroupSetWithTimeSeries(self) -> None:
+```bash
+/etc/redis/populate_redis.sh
+```
+
+## Verifying Success
+
+All these tests take place inside the running container.  If you're seeing a super scary 'root' account, you're on the 
+right track, otherwise 
+
+```bash
+docker exec -it panoptes_docker bash
+```
+
+### Checking the logs
+
+Tail the discovery plugin agent logs and verify that the logged number of devices discovered is 1.  As you add 
+devices, this will increase.
+
+```bash
+tail -f /home/panoptes/logs/discovery_plugin_agent.log
+```
+
+![Discovery logs](../assets/tutorial-discovery-logs.png)
+
+### Checking with Redis
+
+Check redis with 
+
+```bash
+echo "keys *panoptes:resource_manager_kv*" | /usr/bin/redis-cli
+```
+
+and look for the **id|tutorial_device**
+
+![Redis Keys](../assets/tutorial-redis-keys.png)
+
+## Fleshing out our skeleton
+
+Right now the skeleton plugin will only produce an empty set `{}`, but it's being picked up by the container.
+This is because no time series data is ever added to `PanoptesMetricsGroupSet`
+
+What we're going to do next is update the `populateMetricsGroupSetWithTimeSeries()` stub method.
+
+Back out on your host, edit `tutorial/tutorial_plugin.py` and add the following under the method after removing `pass`.
+It should look something like the following;
+
+```python
+def populateMetricsGroupSetWithTimeSeries(self) -> None:
     panoptes_metrics_group = PanoptesMetricsGroup(self._device, 'example', self._execute_frequency)
     self._panoptes_metrics_group_set.add(panoptes_metrics_group)
 ```
 
-Those two additional lines will cause the plugin to produce the output shown below.
+After around 60 seconds, the change should be picked up and run.  To see the output of this change, add the following 
+to the end of the `run()` method in `tutorial/tutorial_plugin.py`, but before the return of 
+**_panoptes_metrics_group_set**.
+
+```python
+for panoptes_metrics_group in self._panoptes_metrics_group_set:
+    self._logger.info(panoptes_metrics_group.json)
+```
+
+This will send the results to the polling_plugins.log in the container.
+To see the results, exec into the container (`docker exec -it panoptes_docker bash`), and tail the polling_plugins.log.
+
+```bash
+tail -f /home/panoptes/logs/polling_plugins.log
+```
+
+![Tutorial Plugin Results](../assets/tutorial-plugin-results.png)
+
+Or in a prettier format;
 
 ```json
 {
-    "metrics_group_type": "example",
-    "metrics_group_interval": 60,
-    "metrics_group_creation_timestamp": 1580339222.678,
-    "metrics_group_schema_version": "0.2",
-    "resource": {
-        "resource_site": "test_site",
-        "resource_class": "test_class",
-        "resource_subclass": "test_subclass",
-        "resource_type": "test_type",
-        "resource_id": "tutorial_device",
-        "resource_endpoint": "test_endpoint",
-        "resource_metadata": {
-            "_resource_ttl": "604800"
-        },
-        "resource_creation_timestamp": 1580339222.6764865,
-        "resource_plugin": "test_plugin"
+  "metrics_group_type": "example",
+  "metrics_group_interval": 60,
+  "metrics_group_creation_timestamp": 1581102668.07,
+  "metrics_group_schema_version": "0.2",
+  "resource": {
+    "resource_site": "local",
+    "resource_class": "system",
+    "resource_subclass": "host",
+    "resource_type": "generic",
+    "resource_id": "tutorial_device",
+    "resource_endpoint": "localhost",
+    "resource_metadata": {
+      "_resource_ttl": "900"
     },
-    "metrics": [],
-    "dimensions": []
+    "resource_creation_timestamp": 1512629517.03,
+    "resource_plugin": "plugin_discovery_from_json_file"
+  },
+  "metrics": [],
+  "dimensions": []
 }
 ```
 
-This is a great start, but there still isn't any meaningful information stored within the MetricsGroup. Extend the populateMetricsGroupSetWithTimeSeries function and add data.
+This is a great start, but there still isn't any meaningful information stored within the `MetricsGroup`. Extend the 
+`populateMetricsGroupSetWithTimeSeries` method with some actual data;
 
 ```python
 def populateMetricsGroupSetWithTimeSeries(self) -> None:
@@ -252,67 +325,66 @@ def populateMetricsGroupSetWithTimeSeries(self) -> None:
 ```
 
 The plugin now returns the time series shown below.
-```
+```json
 {
-    "metrics_group_type": "example",
-    "metrics_group_interval": 60,
-    "metrics_group_creation_timestamp": 1580339222.678,
-    "metrics_group_schema_version": "0.2",
-    "resource": {
-        "resource_site": "test_site",
-        "resource_class": "test_class",
-        "resource_subclass": "test_subclass",
-        "resource_type": "test_type",
-        "resource_id": "tutorial_device",
-        "resource_endpoint": "test_endpoint",
-        "resource_metadata": {
-            "_resource_ttl": "604800"
-        },
-        "resource_creation_timestamp": 1580339222.6764865,
-        "resource_plugin": "test_plugin"
+  "metrics_group_type": "example",
+  "metrics_group_interval": 60,
+  "metrics_group_creation_timestamp": 1581103268.057,
+  "metrics_group_schema_version": "0.2",
+  "resource": {
+    "resource_site": "local",
+    "resource_class": "system",
+    "resource_subclass": "host",
+    "resource_type": "generic",
+    "resource_id": "tutorial_device",
+    "resource_endpoint": "localhost",
+    "resource_metadata": {
+      "_resource_ttl": "900"
     },
-    "metrics": [
-        {
-            "metric_creation_timestamp": 1580339222.681,
-            "metric_name": "cpu_load",
-            "metric_value": 0.3,
-            "metric_type": "gauge"
-        },
-        {
-            "metric_creation_timestamp": 1580339222.68,
-            "metric_name": "context_switch_count",
-            "metric_value": 50,
-            "metric_type": "counter"
-        }
-    ],
-    "dimensions": [
-        {
-            "dimension_name": "cpu_no",
-            "dimension_value": "5"
-        }
-    ]
+    "resource_creation_timestamp": 1512629517.03,
+    "resource_plugin": "plugin_discovery_from_json_file"
+  },
+  "metrics": [
+    {
+      "metric_creation_timestamp": 1581103268.058,
+      "metric_name": "context_switch_count",
+      "metric_value": 50,
+      "metric_type": "counter"
+    },
+    {
+      "metric_creation_timestamp": 1581103268.058,
+      "metric_name": "cpu_load",
+      "metric_value": 0.3,
+      "metric_type": "gauge"
+    }
+  ],
+  "dimensions": [
+    {
+      "dimension_name": "cpu_no",
+      "dimension_value": "5"
+    }
+  ]
 }
 ```
 
-The plugin's callback function will place the output shown above on the message queue. This will be consumed by the downstream InfluxDB consumer.
-The data is immediately graphable on Grafana.
+The plugin's callback function will place the output shown above on the message queue. This will be consumed by the 
+downstream InfluxDB consumer.  The data is immediately graphable on Grafana.
 
-![Grafana Image](https://user-images.githubusercontent.com/29840907/73494691-e4c87600-43ac-11ea-8adb-4316ba63aeab.png)
+![Grafana Image](../assets/tutorial-plugin-grafana-results.png)
 
-NOTE: Panoptes has built in support for counter / rate transformations. In order to tell the plugin runner to perform the transformations, add a [transforms] key to the .panoptes-plugins and under it, add the metric names in the following format: `<metrics_group_type> = rate:<resulting_metrics_group_type>:<COUNTERNAMES>`. For the example above, it would be `example = rate:example:context_switch_count`.
+You have now finished writing a basic Panoptes polling plugin.
 
+## Additional Tips
 
-```sh
-[Core]
-Name = Tutorial Plugin
-Module = /home/panoptes_v/lib/python3.6/site-packages/yahoo_panoptes/plugins/polling/tutorial_plugin/tutorial_polling_plugin.py
+### Counter/Rate transforms on data
 
-[Documentation]
-Author = <Your Name>
-Version = 0.1
-Website = github.com/<you>
-Description = This is a tutorial plugin
+Panoptes has built in support for counter / rate transformations. In order to tell the plugin runner to perform the 
+transformations, add a `[transforms]` key to the `.panoptes-plugin` configuration file and under it, add the metric names 
+in the following format: `<metrics_group_type> = rate:<resulting_metrics_group_type>:<COUNTERNAMES>`. 
 
+For the example above, it would be `example = rate:example:context_switch_count`.
+
+```bash
 [main]
 execute_frequency = 60
 resource_filter = resource_id = "tutorial_device"
@@ -323,7 +395,10 @@ example = rate:example:context_switch_count
 
 ```
 
-Plugins can do anything a python function and class can do. While Panoptes was built for the purpose of network monitoring, its applicable scope isn't limited there. 
+### Making API calls
+
+Plugins can do anything a python function and class can do. While Panoptes was built for the purpose of network 
+monitoring, its applicable scope isn't limited there. 
 
 If you would like to extend your plugin to make an API call you can add the skeleton code below inside the plugin.
 
@@ -345,4 +420,3 @@ def populateMetricsGroupSetWithTimeSeries(self) -> None:
                                                               PanoptesMetricType.GAUGE))
         self._panoptes_metrics_group_set.add(api_call_metrics_group)
 ```
-    
