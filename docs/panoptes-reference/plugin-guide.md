@@ -200,20 +200,7 @@ docker run -d \
     panoptes_docker
 ```
 
-At this point you should be able to check that the docker is running with `docker ps`.  We need one more step before 
-verifying results.  Log into the running container with;
-
-```bash
-docker exec -it panoptes_docker bash
-```
-
-That should give you root on the container.  Next, run this script.  It effectively updates the redis-cli with a couple 
-of environment variables referring to the device community strings, and we only require you do this because we couldn't 
-get it working during build time.
-
-```bash
-/etc/redis/populate_redis.sh
-```
+At this point you should be able to check that the docker is running with `docker ps`.
 
 ## Verifying Success
 

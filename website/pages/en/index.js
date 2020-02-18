@@ -105,9 +105,6 @@ class Index extends React.Component {
                 'Fire that bad boy up with:<br/> '+
                 '```docker run -d --sysctl net.core.somaxconn=511 --name="panoptes_docker" --shm-size=2G ' +
                 '-p 127.0.0.1:8080:3000/tcp panoptes_docker```<br/><br/>' +
-                'Jump into the running container with:<br/> ```docker exec -it panoptes_docker bash```<br/><br/>' +
-                'Run a small script that populates the redis DB with community strings:<br/>' +
-                '```/etc/redis/populate_redis.sh```<br/><br/>' +
                 'Then fire up a browser, point at http://127.0.0.1:8080 and check your results in Grafana (admin/admin).<br/><br/>' +
               'Read more about this at the [Panoptes Docker](https://github.com/yahoo/panoptes_docker) repo.',
             image: `${baseUrl}img/docker-vertical-logo-monochromatic.png`,
