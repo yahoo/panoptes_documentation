@@ -6,8 +6,11 @@ sidebar_label: Installation
 
 ## Pre-requisites
 
-> If you would be installing the entire stack on a single host, we recommend using a host with at least 8 Cores, 16GB 
-RAM and 50GB Disk Space.
+> If you would be installing the entire stack on a single host, we recommend using a host with at least 8 Cores, 
+> 16GB RAM and 50GB Disk Space.
+
+> These instructions are for installing Panoptes in a production environment.  If you're testing or developing Panoptes
+> we would recommend the [Panoptes_docker](https://github.com/yahoo/panoptes_docker) project instead.
 
 ### OS
 

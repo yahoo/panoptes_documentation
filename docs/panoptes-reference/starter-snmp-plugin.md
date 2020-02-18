@@ -372,7 +372,4 @@ Resulting time series data after transformations.
 
 The data shows up immediately and is graphable on Grafana.
 
-<p align="left">
-  <img src="https://user-images.githubusercontent.com/29840907/73912210-d9dd7c00-48ab-11ea-9e6e-616008704207.png" width="450" title="Grafana Dashboard">
-</p>
-
+![Grafana Dash](https://user-images.githubusercontent.com/29840907/73912210-d9dd7c00-48ab-11ea-9e6e-616008704207.png)
