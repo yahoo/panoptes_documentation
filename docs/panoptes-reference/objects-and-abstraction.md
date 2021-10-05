@@ -6,7 +6,7 @@ sidebar_label: Objects and Abstraction
 ### Site
 
 A 'site' is a string which identifies a physical or logical collection of [resources](#resource) to monitor. At 
-Oath, we set the site to the name of datacenter in which a Panoptes instance is hosted.
+Yahoo, we set the site to the name of datacenter in which a Panoptes instance is hosted.
 
 ### Resource
 
@@ -24,14 +24,14 @@ device with associated metadata. The key properties a resource has are:
 
 Resources are 'discovered' by the [Discovery subsystem](./subsystems.md#discovery).
 
-At Oath, we set the resource ids to FQDNs for network devices since they are guaranteed to be unique within our
+At Yahoo, we set the resource ids to FQDNs for network devices since they are guaranteed to be unique within our
 system. Also, we set the following classifiers:
 
 * Class: "network" for network devices, "system" for hosts
 * Subclass: Typically set to the _function_ of the resource - e.g. switch, firewall, router
 * Type: For network devices, the manufacturer name
 
-Note that the above are an implementation detail at Oath and only meant to serve as guidance - in your installation,
+Note that the above are an implementation detail at Yahoo and only meant to serve as guidance - in your installation,
 they could be set to any value.
 
 We would urge you to consider your resource naming and classification standards before a large scale rollout -

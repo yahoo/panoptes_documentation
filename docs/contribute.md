@@ -9,7 +9,7 @@ contributions.
 
 ## Code of Conduct
 
-By participating in this project, you agree to abide by the [Oath Code of Conduct](code-of-conduct.md). Everyone is 
+By participating in this project, you agree to abide by the [Yahoo Code of Conduct](code-of-conduct.md). Everyone is 
 welcome to submit a pull request or open an issue to improve the documentation, add improvements, or report bugs.
 
 ## How to Ask a Question
