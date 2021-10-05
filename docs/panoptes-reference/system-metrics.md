@@ -137,6 +137,7 @@ according to the states.
 - (5) Internal Failure
 - (6) Missing Metrics
 - (7) Ping Failure
+- (8) Enrichment Failure
 
 #### Structure
 * metrics_group_type: status
@@ -182,6 +183,11 @@ The metric collection code executed without error, but the results were empty.
 #### (7) Ping Failure
 Attempting to ping the device yielded either a [PanoptesPingException], or resulted in total packet loss (i.e. a packet 
 loss pct of 100%).  Note that this requires a [PanoptesPollingStatus] `ping` set to True.
+
+#### (8) Enrichment Failure
+Attempting to update an enrichment failed.  Enrichments are obtained on a different timing schedule to metrics.  
+Experience has shown that this normally involves connectivity to the device itself.  Checking the 'enrichment logs' for
+more details usually provides useful.
 
 ### Plugin Execution Flow
 
