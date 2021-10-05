@@ -10,9 +10,12 @@ documentation.
 `/website` contains [Docusaurus.io](https://docusaurus.io/) metadata for building the [documentation website](https://getpanoptes.io)
 
 ## Maintainers
-* Ian Holmes: iholmes@verizonmedia.com
-* James Diss: rexfury@verizonmedia.com
-* Nathan Kamm: nathan.kamm@verizonmedia.com
+* Ian Holmes: iholmes@yahooinc.com
+* James Diss: rexfury@yahooinc.com
+
+## Past Maintainers & Thanks
+* Varun Varma
+* Nathan Kamm
 
 ## Contribute
 

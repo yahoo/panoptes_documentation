@@ -37,7 +37,7 @@ const siteConfig = {
   },
 
   // This copyright info is used in /core/Footer.js and blog RSS/Atom feeds.
-  copyright: `Copyright ${new Date().getFullYear()} Oath Inc.`,
+  copyright: `Copyright ${new Date().getFullYear()} Yahoo.`,
 
   highlight: {
     // Highlight.js theme to use for syntax highlighting in code blocks.
