@@ -29,10 +29,6 @@ indicate what type of issue it is.
 Pull requests are welcome for bug fixes. If you want to implement something new, please [request a feature first](#report-a-bug-or-request-a-feature) so we can discuss it.
 
 #### Creating a Pull Request
-Before you submit any code, we need you to agree to our 
-[Contributor License Agreement](https://yahoocla.herokuapp.com/); this ensures we can continue to protect your 
-contributions under an open source license well into the future.
-
 Please follow [best practices](https://github.com/trein/dev-best-practices/wiki/Git-Commit-Best-Practices) for creating 
 git commits. We use the [Github flow](https://guides.github.com/introduction/flow/) workflow for our PRs.
 
